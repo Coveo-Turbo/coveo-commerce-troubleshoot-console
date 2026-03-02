@@ -1,0 +1,32 @@
+{
+  "name": "coveo-commerce-troubleshoot-console",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:hosted": "node ./scripts/build-hosted.mjs",
+    "deploy:hosted": "node ./scripts/build-hosted.mjs && coveo ui:deploy --config coveo.deploy.json",
+    "prepare:hosted:local": "node ./scripts/hosted-local-prepare.mjs",
+    "hosted:local": "node ./scripts/hosted-local-serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && npm run typecheck",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@coveo/headless": "^3.36.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.13.4",
+    "eslint": "^9.20.1",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.1",
+    "vitest": "^3.0.7"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.playwright/
+playwright-report/
+test-results/
+hosted-local/generated-config.js
+.env
+*.local

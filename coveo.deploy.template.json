@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "generatedBy": "coveo-commerce-troubleshoot-console",
+    "version": 1
+  },
+  "hostedPage": {
+    "name": "${APP_HOSTED_PAGE_NAME}",
+    "pageId": "${APP_HOSTED_PAGE_ID}",
+    "markupPath": "dist/bundle/troubleshoot.html",
+    "scripts": [
+      {
+        "path": "dist/bundle/js/${MAIN_JS_FILE}",
+        "isModule": true
+      },
+      {
+        "url": "https://static.cloud.coveo.com/atomic/v3/atomic.esm.js",
+        "isModule": true
+      }
+    ],
+    "styles": [
+      {
+        "path": "dist/bundle/styles/main.css"
+      },
+      {
+        "url": "https://static.cloud.coveo.com/atomic/v3/themes/coveo.css"
+      },
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      }
+    ]
+  }
+}

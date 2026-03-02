@@ -1,0 +1,321 @@
+[data-template='troubleshoot'] .troubleshoot-root,
+.troubleshoot-root {
+  --tc-font-sans: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
+  --tc-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  --tc-bg: radial-gradient(circle at top left, #fdf6e9, #f3ece1 48%, #ece4d7 100%);
+  --tc-surface: rgba(255, 255, 255, 0.86);
+  --tc-border: rgba(112, 84, 42, 0.24);
+  --tc-ink: #231b10;
+  --tc-muted: #5a4b38;
+  --tc-accent: #0b6b60;
+  --tc-danger: #a3382b;
+
+  font-family: var(--tc-font-sans);
+  color: var(--tc-ink);
+  min-height: 100vh;
+  padding: 1.4rem;
+  background: var(--tc-bg);
+  box-sizing: border-box;
+}
+
+[data-template='troubleshoot'] .troubleshoot-root *,
+.troubleshoot-root * {
+  box-sizing: border-box;
+}
+
+[data-template='troubleshoot'] .tc-panel,
+[data-template='troubleshoot'] .tc-session,
+[data-template='troubleshoot'] .tc-modal,
+.troubleshoot-root .tc-panel,
+.troubleshoot-root .tc-session,
+.troubleshoot-root .tc-modal {
+  border: 1px solid var(--tc-border);
+  border-radius: 14px;
+  background: var(--tc-surface);
+  backdrop-filter: blur(4px);
+}
+
+[data-template='troubleshoot'] .tc-panel,
+.troubleshoot-root .tc-panel {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+[data-template='troubleshoot'] .tc-panel__header,
+.troubleshoot-root .tc-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-template='troubleshoot'] h1,
+[data-template='troubleshoot'] h2,
+[data-template='troubleshoot'] h3,
+.troubleshoot-root h1,
+.troubleshoot-root h2,
+.troubleshoot-root h3 {
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+[data-template='troubleshoot'] .tc-panel__controls,
+.troubleshoot-root .tc-panel__controls {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  transition: opacity 180ms ease, max-height 180ms ease;
+  max-height: 600px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+[data-template='troubleshoot'] .tc-panel__controls.is-minimized,
+.troubleshoot-root .tc-panel__controls.is-minimized {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+[data-template='troubleshoot'] .field,
+.troubleshoot-root .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+[data-template='troubleshoot'] .field span,
+.troubleshoot-root .field span {
+  color: var(--tc-muted);
+  font-size: 0.83rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+[data-template='troubleshoot'] select,
+[data-template='troubleshoot'] input,
+[data-template='troubleshoot'] textarea,
+[data-template='troubleshoot'] button,
+.troubleshoot-root select,
+.troubleshoot-root input,
+.troubleshoot-root textarea,
+.troubleshoot-root button {
+  font: inherit;
+  color: inherit;
+}
+
+[data-template='troubleshoot'] select,
+[data-template='troubleshoot'] input,
+[data-template='troubleshoot'] textarea,
+.troubleshoot-root select,
+.troubleshoot-root input,
+.troubleshoot-root textarea {
+  border: 1px solid var(--tc-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.62rem;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+[data-template='troubleshoot'] textarea,
+.troubleshoot-root textarea {
+  font-family: var(--tc-font-mono);
+  font-size: 0.83rem;
+}
+
+[data-template='troubleshoot'] .mode-switch,
+.troubleshoot-root .mode-switch {
+  display: inline-flex;
+  border: 1px solid var(--tc-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+[data-template='troubleshoot'] .mode-button,
+.troubleshoot-root .mode-button {
+  border: 0;
+  background: transparent;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+}
+
+[data-template='troubleshoot'] .mode-button.active,
+.troubleshoot-root .mode-button.active {
+  background: var(--tc-accent);
+  color: #f5faf9;
+}
+
+[data-template='troubleshoot'] .button-row,
+.troubleshoot-root .button-row {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+[data-template='troubleshoot'] button,
+.troubleshoot-root button {
+  border: 1px solid var(--tc-border);
+  border-radius: 9px;
+  padding: 0.45rem 0.72rem;
+  cursor: pointer;
+  background: #fff;
+}
+
+[data-template='troubleshoot'] .icon-button,
+.troubleshoot-root .icon-button {
+  width: 2rem;
+  height: 2rem;
+  display: inline-grid;
+  place-items: center;
+}
+
+[data-template='troubleshoot'] .danger,
+.troubleshoot-root .danger {
+  border-color: rgba(163, 56, 43, 0.42);
+  color: var(--tc-danger);
+}
+
+[data-template='troubleshoot'] .tc-session,
+.troubleshoot-root .tc-session {
+  padding: 1rem;
+}
+
+[data-template='troubleshoot'] .pills,
+.troubleshoot-root .pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.75rem 0;
+}
+
+[data-template='troubleshoot'] .pill,
+.troubleshoot-root .pill {
+  border: 1px solid var(--tc-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.62rem;
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 0.78rem;
+}
+
+[data-template='troubleshoot'] .session-grid,
+.troubleshoot-root .session-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+[data-template='troubleshoot'] .session-row,
+.troubleshoot-root .session-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+[data-template='troubleshoot'] .session-row span,
+.troubleshoot-root .session-row span {
+  color: var(--tc-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+[data-template='troubleshoot'] code,
+.troubleshoot-root code {
+  font-family: var(--tc-font-mono);
+  font-size: 0.79rem;
+  word-break: break-all;
+}
+
+[data-template='troubleshoot'] .status-line,
+.troubleshoot-root .status-line {
+  color: var(--tc-muted);
+  margin: 0.8rem 0;
+}
+
+[data-template='troubleshoot'] .result-panel,
+.troubleshoot-root .result-panel {
+  margin: 0;
+  max-height: 50vh;
+  overflow: auto;
+  border: 1px solid var(--tc-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: #fff;
+  font-family: var(--tc-font-mono);
+  font-size: 0.78rem;
+}
+
+[data-template='troubleshoot'] .tc-modal,
+.troubleshoot-root .tc-modal {
+  width: min(780px, calc(100vw - 2rem));
+  padding: 0;
+}
+
+[data-template='troubleshoot'] .modal-form,
+.troubleshoot-root .modal-form {
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+[data-template='troubleshoot'] .modal-actions,
+.troubleshoot-root .modal-actions {
+  justify-content: flex-end;
+}
+
+[data-template='troubleshoot'] .error,
+.troubleshoot-root .error {
+  color: var(--tc-danger);
+  margin: 0;
+}
+
+[data-template='troubleshoot'] .preset-list,
+.troubleshoot-root .preset-list {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-template='troubleshoot'] .preset-row,
+.troubleshoot-root .preset-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 1px solid var(--tc-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+}
+
+[data-template='troubleshoot'] .preset-row code,
+.troubleshoot-root .preset-row code {
+  font-size: 0.72rem;
+}
+
+[data-template='troubleshoot'] .init-error,
+.troubleshoot-root .init-error {
+  border: 1px solid rgba(163, 56, 43, 0.35);
+  border-radius: 12px;
+  padding: 1rem;
+  background: rgba(255, 241, 239, 0.9);
+  color: #5a1e16;
+}
+
+@media (max-width: 720px) {
+  [data-template='troubleshoot'] .troubleshoot-root,
+  .troubleshoot-root {
+    padding: 0.8rem;
+  }
+
+  [data-template='troubleshoot'] .tc-panel__controls,
+  .troubleshoot-root .tc-panel__controls {
+    grid-template-columns: 1fr;
+  }
+
+  [data-template='troubleshoot'] .field-actions,
+  .troubleshoot-root .field-actions {
+    grid-column: auto;
+  }
+}
