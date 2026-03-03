@@ -1,7 +1,12 @@
 <section class="troubleshoot-root" aria-live="polite">
+  <section class="tc-hero">
+    <p class="tc-hero__kicker">Atomic Commerce v3</p>
+    <h1 class="tc-hero__title">Commerce Troubleshoot Console</h1>
+    <p class="tc-hero__subtitle">Switch tracking ID, locale, mode, and payload context with live requests.</p>
+  </section>
+
   <header class="tc-panel" data-role="top-panel">
     <div class="tc-panel__header">
-      <h1>Commerce Troubleshoot Console</h1>
       <button
         type="button"
         data-action="toggle-panel"
@@ -14,17 +19,17 @@
     </div>
 
     <div class="tc-panel__controls" data-role="top-panel-controls">
-      <label class="field">
+      <label class="field" data-minimize-keep="true">
         <span>Tracking ID</span>
         <select data-control="tracking"></select>
       </label>
 
-      <label class="field">
+      <label class="field" data-minimize-keep="true">
         <span>Locale</span>
         <select data-control="locale"></select>
       </label>
 
-      <div class="field">
+      <div class="field" data-minimize-keep="true">
         <span>Mode</span>
         <div class="mode-switch" role="tablist" aria-label="Execution mode">
           <button type="button" class="mode-button active" data-mode="search" role="tab" aria-selected="true">
@@ -36,32 +41,79 @@
         </div>
       </div>
 
-      <label class="field">
-        <span>Search Query</span>
-        <input type="text" data-control="query" placeholder="Optional query text" />
-      </label>
-
-      <label class="field">
+      <label class="field" data-role="listing-filter-field">
         <span>Listing Filter</span>
         <input type="text" data-control="listing-filter" placeholder="Filter by label, ID, or URL" />
       </label>
 
-      <label class="field">
+      <label class="field" data-role="listing-select-field" data-minimize-keep="true">
         <span>Listing</span>
         <select data-control="listing"></select>
-      </label>
-
-      <label class="field">
-        <span>Context Preset</span>
-        <select data-control="preset"></select>
       </label>
 
       <div class="field field-actions">
         <span>Advanced Context</span>
         <div class="button-row">
-          <button type="button" data-action="open-advanced">Edit JSON</button>
-          <button type="button" data-action="open-presets">Manage Presets</button>
-          <button type="button" data-action="run-request">Run</button>
+          <label class="field-inline">
+            <span>Preset</span>
+            <select data-control="preset"></select>
+          </label>
+          <button type="button" data-action="open-advanced">Edit Selected Preset JSON</button>
+          <button type="button" data-action="open-presets">Manage Context Presets</button>
+        </div>
+      </div>
+
+      <div class="field field-actions">
+        <span>Product Templates</span>
+        <div class="button-row">
+          <label class="field-inline">
+            <span>Preset</span>
+            <select data-control="product-template-preset"></select>
+          </label>
+          <label class="field-inline">
+            <span>Product List Display</span>
+            <select data-control="product-list-display">
+              <option value="grid">Grid</option>
+              <option value="list">List</option>
+            </select>
+          </label>
+          <label class="field-inline">
+            <span>Product List Density</span>
+            <select data-control="product-list-density">
+              <option value="compact">Compact</option>
+              <option value="normal">Normal</option>
+              <option value="comfortable">Comfortable</option>
+            </select>
+          </label>
+          <label class="field-inline">
+            <span>Product Image Size</span>
+            <select data-control="product-list-image-size">
+              <option value="small">Small</option>
+              <option value="large">Large</option>
+              <option value="icon">Icon</option>
+              <option value="none">None</option>
+            </select>
+          </label>
+          <label class="field-inline">
+            <span>Instant Product Image</span>
+            <select data-control="instant-products-image-size">
+              <option value="small">Small</option>
+              <option value="large">Large</option>
+              <option value="icon">Icon</option>
+              <option value="none">None</option>
+            </select>
+          </label>
+          <button type="button" data-action="open-advanced-product-templates">
+            Advanced Product Templates
+          </button>
+          <button type="button" data-action="open-product-template-presets">Manage Product Templates</button>
+        </div>
+      </div>
+
+      <div class="field field-actions">
+        <span>Console Actions</span>
+        <div class="button-row">
+          <button type="button" data-action="run-request">Apply</button>
           <button type="button" data-action="reset-state" class="danger">Reset</button>
         </div>
       </div>
@@ -69,7 +121,25 @@
   </header>
 
   <section class="tc-session" data-role="session-panel">
-    <h2>Session Summary</h2>
+    <div class="tc-session__header">
+      <div>
+        <h2>Session</h2>
+        <p class="tc-session__subtitle">Low-profile summary with expandable diagnostics.</p>
+      </div>
+      <div class="tc-session__actions">
+        <span class="status-chip" data-field="status-mini">Idle</span>
+        <button
+          type="button"
+          data-action="toggle-session"
+          class="icon-button"
+          aria-expanded="false"
+          title="Expand diagnostics"
+        >
+          <span aria-hidden="true">▸</span>
+        </button>
+      </div>
+    </div>
+
     <div class="pills">
       <span class="pill" data-field="mode-pill">Mode: search</span>
       <span class="pill" data-field="tracking-pill"></span>
@@ -77,19 +147,25 @@
       <span class="pill" data-field="listing-pill"></span>
     </div>
 
-    <div class="session-grid">
-      <div class="session-row" data-field="search-row">
-        <span>Search URL</span>
-        <code data-field="search-url"></code>
+    <div class="tc-session__details is-minimized" data-role="session-details">
+      <div class="session-grid">
+        <div class="session-row" data-field="search-row">
+          <span>Search URL</span>
+          <code data-field="search-url"></code>
+        </div>
+        <div class="session-row" data-field="listing-row" hidden>
+          <span>Listing URL</span>
+          <code data-field="listing-url"></code>
+        </div>
       </div>
-      <div class="session-row" data-field="listing-row" hidden>
-        <span>Listing URL</span>
-        <code data-field="listing-url"></code>
-      </div>
-    </div>
 
-    <p class="status-line" data-field="status">Idle</p>
-    <pre class="result-panel" data-field="result">Run a request to inspect payload/response.</pre>
+      <p class="status-line" data-field="status">Idle</p>
+      <pre class="result-panel" data-field="result">Apply to initialize Atomic commerce interface.</pre>
+    </div>
+  </section>
+
+  <section class="tc-atomic-shell" aria-label="Commerce Experience">
+    <div class="tc-atomic-root" data-role="atomic-interface-root"></div>
   </section>
 
   <dialog class="tc-modal" data-modal="advanced-context">
@@ -128,6 +204,61 @@
 
       <div class="button-row modal-actions">
         <button type="button" data-action="add-preset">Add from current context</button>
+        <button value="close">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="tc-modal" data-modal="product-templates">
+    <form method="dialog" class="modal-form">
+      <header>
+        <h3>Advanced Product Templates</h3>
+        <p>
+          Paste template body HTML or a full <code>&lt;atomic-product-template&gt;</code> block. Leave blank to use
+          Atomic defaults.
+        </p>
+      </header>
+
+      <label class="field">
+        <span>Product List Template HTML</span>
+        <textarea
+          class="template-editor"
+          data-field="product-list-template"
+          rows="8"
+          spellcheck="false"
+        ></textarea>
+      </label>
+
+      <label class="field">
+        <span>Instant Products Template HTML</span>
+        <textarea
+          class="template-editor"
+          data-field="instant-products-template"
+          rows="8"
+          spellcheck="false"
+        ></textarea>
+      </label>
+
+      <p class="error" data-field="product-template-error" hidden></p>
+
+      <div class="button-row modal-actions">
+        <button type="button" data-action="clear-product-templates">Clear</button>
+        <button value="cancel">Cancel</button>
+        <button type="button" data-action="apply-product-templates">Apply</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="tc-modal" data-modal="manage-product-template-presets">
+    <form method="dialog" class="modal-form">
+      <header>
+        <h3>Manage Product Template Presets</h3>
+      </header>
+
+      <ul class="preset-list" data-role="product-template-preset-list"></ul>
+
+      <div class="button-row modal-actions">
+        <button type="button" data-action="add-product-template-preset">Add from current templates</button>
         <button value="close">Close</button>
       </div>
     </form>

@@ -51,6 +51,7 @@ export function mapProfileToRuntimeConfig(env) {
     cmhAccessToken: env.APP_CMH_ACCESS_TOKEN,
     hostedPageName: env.APP_HOSTED_PAGE_NAME,
     hostedPageId: env.APP_HOSTED_PAGE_ID || undefined,
+    defaultProductTemplatePresetId: env.APP_DEFAULT_PRODUCT_TEMPLATE_PRESET_ID || undefined,
     defaults: {
       trackingId: env.APP_DEFAULT_TRACKING_ID || undefined,
       language: env.APP_DEFAULT_LANGUAGE || 'en',

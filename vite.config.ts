@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite';
 
 export default defineConfig({
+  envPrefix: ['VITE_', 'APP_'],
   build: {
     outDir: 'dist',
     sourcemap: true,

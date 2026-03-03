@@ -1,16 +1,20 @@
 # Coveo Commerce Troubleshoot Console
 
-Standalone Vite + Vanilla TypeScript troubleshoot console for Coveo Commerce, with profile-driven configuration and strict token separation.
+Standalone Vite + Vanilla TypeScript troubleshoot console for Coveo Commerce, with profile-driven configuration, strict token separation, and Atomic commerce rendering.
 
 ## Highlights
 
 - Single-purpose troubleshoot UI for search/listing execution.
+- Atomic commerce interfaces by mode:
+  - `atomic-commerce-interface type="search"` for search mode.
+  - `atomic-commerce-interface type="product-listing"` for listing mode.
 - Strict two-token model:
   - `engineAccessToken` is used only for `/commerce/v2/search` and `/commerce/v2/listing`.
   - `cmhAccessToken` is used only for CMH discovery endpoints.
 - Profile-based build/deploy (`profiles/<name>.env`) with no org-specific code changes.
 - Hosted-compatible bootstrap (poll + timeout + shadow-root support).
 - Persistent mode/tracking/locale/listing/presets/minimized panel state.
+- Product template preset management (Atomic Default + Atomic Custom 1 + custom) for product list and instant products.
 - Safe storage fallback for sandboxed environments where `localStorage` is blocked.
 
 ## Project Layout
@@ -19,6 +23,7 @@ Standalone Vite + Vanilla TypeScript troubleshoot console for Coveo Commerce, wi
 src/
   app/
   services/
+  product-templates/
   state/
   styles/
   templates/
@@ -37,6 +42,9 @@ tests/
    - `APP_ENGINE_ACCESS_TOKEN`
    - `APP_CMH_ACCESS_TOKEN`
    - `APP_HOSTED_PAGE_NAME`
+3. Optional key:
+   - `APP_DEFAULT_PRODUCT_TEMPLATE_PRESET_ID` (falls back to `default` when missing or unknown)
+   - Preset IDs from repo: `default`, `atomic-custom-1`
 
 ## Commands
 

@@ -1,0 +1,73 @@
+<template>
+  <atomic-product-section-name>
+    <atomic-product-link class="font-bold"></atomic-product-link>
+  </atomic-product-section-name>
+  <atomic-product-section-badges>
+    <atomic-product-field-condition must-match-newflag="EnumProductCallouts1">
+      <div>
+        <span
+          class="badge badge-primary"
+          style="
+            background: #0f0f0f;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+          "
+          >NEW</span
+        >
+      </div>
+    </atomic-product-field-condition>
+  </atomic-product-section-badges>
+  <atomic-product-section-visual>
+    <atomic-product-field-condition if-defined="imageurl">
+      <atomic-product-image field="imageurl"></atomic-product-image>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-defined="ec_thumbnails">
+      <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+    </atomic-product-field-condition>
+  </atomic-product-section-visual>
+  <atomic-product-section-metadata>
+    <atomic-product-field-condition if-defined="brand">
+      <atomic-product-multi-value-text
+        field="brand"
+        max-values-to-display="3"
+        class="text-neutral-dark block"
+      ></atomic-product-multi-value-text>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-defined="ec_brand">
+      <atomic-product-text
+        field="ec_brand"
+        class="text-neutral-dark block"
+      ></atomic-product-text>
+    </atomic-product-field-condition>
+
+    <atomic-product-field-condition if-defined="cat_available_sizes">
+      <atomic-product-multi-value-text
+        field="cat_available_sizes"
+      ></atomic-product-multi-value-text>
+    </atomic-product-field-condition>
+
+    <atomic-product-field-condition if-defined="ec_rating">
+      <atomic-product-rating field="ec_rating"></atomic-product-rating>
+    </atomic-product-field-condition>
+
+    <atomic-product-field-condition if-defined="concepts">
+      <atomic-product-multi-value-text
+        field="concepts"
+      ></atomic-product-multi-value-text>
+    </atomic-product-field-condition>
+  </atomic-product-section-metadata>
+  <atomic-product-section-emphasized>
+    <atomic-product-price currency="USD"></atomic-product-price>
+  </atomic-product-section-emphasized>
+
+  <atomic-product-section-description>
+    <atomic-product-excerpt></atomic-product-excerpt>
+  </atomic-product-section-description>
+
+  <atomic-product-section-children>
+    <atomic-product-children></atomic-product-children>
+  </atomic-product-section-children>
+</template>

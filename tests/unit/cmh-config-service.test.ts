@@ -11,9 +11,108 @@ function createJsonResponse(status: number, payload: unknown): Response {
 }
 
 describe('cmh-config-service', () => {
+  it('invokes fetch with window/global scope to avoid illegal invocation', async () => {
+    const fetchLike = vi.fn(function (this: unknown, input: URL | RequestInfo) {
+      if (this !== globalThis) {
+        throw new TypeError('Illegal invocation');
+      }
+
+      const url = String(input);
+      if (url.includes('/trackingidcatalogmappings')) {
+        return Promise.resolve(createJsonResponse(200, {items: []}));
+      }
+      if (url.includes('/listings/pages')) {
+        return Promise.resolve(createJsonResponse(200, {items: []}));
+      }
+
+      return Promise.resolve(createJsonResponse(404, {message: 'unknown'}));
+    });
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchLike as unknown as typeof fetch,
+    });
+
+    await expect(service.getTrackingData()).resolves.toBeDefined();
+    expect(fetchLike).toHaveBeenCalled();
+  });
+
+  it('calls discovery endpoints without unscoped listings pages requests', async () => {
+    const fetchMock = vi.fn(async (input: URL | RequestInfo) => {
+      const url = String(input);
+      if (url.includes('?page=')) {
+        return createJsonResponse(400, {message: 'page is not supported'});
+      }
+
+      if (url.includes('/trackingidcatalogmappings')) {
+        return createJsonResponse(200, {
+          items: [
+            {
+              trackingId: 'storefront-us',
+              locales: [
+                {
+                  id: 'en-us-usd',
+                  language: 'en',
+                  country: 'US',
+                  currency: 'USD',
+                  viewUrl: 'https://example.com/',
+                },
+              ],
+            },
+          ],
+        });
+      }
+
+      if (url.includes('/listings/pages?trackingId=storefront-us')) {
+        return createJsonResponse(200, {
+          items: [],
+        });
+      }
+
+      return createJsonResponse(404, {message: 'unknown'});
+    });
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    const result = await service.getTrackingData();
+    expect(result.length).toBeGreaterThan(0);
+
+    const urls = (fetchMock.mock.calls as unknown[][]).map((call) => String(call[0]));
+    expect(urls).toContain(
+      'https://platform.cloud.coveo.com/rest/organizations/my-org/trackingidcatalogmappings'
+    );
+    expect(urls).toContain(
+      'https://platform.cloud.coveo.com/rest/organizations/my-org/commerce/v2/listings/pages?trackingId=storefront-us'
+    );
+    expect(urls).not.toContain(
+      'https://platform.cloud.coveo.com/rest/organizations/my-org/commerce/v2/listings/pages'
+    );
+    expect(urls.some((url) => url.includes('/configurations/search'))).toBe(false);
+    expect(urls.some((url) => url.includes('/configurations/listings'))).toBe(false);
+    expect(urls.some((url) => url.includes('?page='))).toBe(false);
+  });
+
   it('parses trackingidcatalogmappings as primary discovery source', async () => {
-    const fetchMock = vi.fn(async () =>
-      createJsonResponse(200, {
+    const fetchMock = vi.fn(async (...args: unknown[]) => {
+      void args;
+      return createJsonResponse(200, {
         items: [
           {
             trackingId: 'storefront-us',
@@ -36,8 +135,8 @@ describe('cmh-config-service', () => {
             ],
           },
         ],
-      })
-    );
+      });
+    });
 
     const service = new CmhConfigService({
       organizationId: 'my-org',
@@ -58,32 +157,71 @@ describe('cmh-config-service', () => {
     expect(result[0]?.locales[0]?.id).toBe('en-us-usd');
     expect(result[0]?.listings[0]?.id).toBe('listing-a');
 
-    const requestInit = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const mappingCall = (fetchMock.mock.calls as unknown[][]).find((call) =>
+      String(call[0]).includes('/trackingidcatalogmappings')
+    );
+    expect(mappingCall).toBeDefined();
+
+    const requestInit = (mappingCall?.[1] as RequestInit | undefined) ?? {};
     expect((requestInit.headers as Record<string, string>).Authorization).toBe('Bearer cmh-token');
   });
 
-  it('falls back to listing/search config endpoints when primary mapping is unavailable', async () => {
+  it('parses locales from trackingIdToCatalogMapping with searchPageUri', async () => {
     const fetchMock = vi.fn(async (input: URL | RequestInfo) => {
       const url = String(input);
       if (url.includes('/trackingidcatalogmappings')) {
-        return createJsonResponse(500, {message: 'error'});
-      }
-
-      if (url.includes('/configurations/listings')) {
         return createJsonResponse(200, {
-          items: [{trackingId: 'fallback-1'}],
+          items: [
+            {
+              trackingId: 'storefront-eu',
+              trackingIdToCatalogMapping: [
+                {
+                  language: 'fr',
+                  country: 'FR',
+                  currency: 'EUR',
+                  searchPageUri: 'https://example.com/fr/fr/search',
+                },
+              ],
+            },
+          ],
         });
       }
 
-      if (url.includes('/configurations/search')) {
+      return createJsonResponse(200, {items: []});
+    });
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    const result = await service.getTrackingData();
+    const eu = result.find((entry) => entry.trackingId === 'storefront-eu');
+
+    expect(eu).toBeDefined();
+    expect(eu?.locales[0]?.id).toBe('fr-fr-eur');
+    expect(eu?.locales[0]?.viewUrl).toBe('https://example.com/fr/fr/search');
+  });
+
+  it('keeps tracking IDs from sparse catalog mappings and uses them for scoped listing page calls', async () => {
+    const fetchMock = vi.fn(async (input: URL | RequestInfo) => {
+      const url = String(input);
+      if (url.includes('/trackingidcatalogmappings')) {
         return createJsonResponse(200, {
-          items: [{trackingId: 'fallback-2', language: 'fr', country: 'CA', currency: 'CAD'}],
+          items: [{trackingId: 'sparse-tracking'}],
         });
       }
 
-      if (url.includes('/listings/pages')) {
+      if (url.includes('/commerce/v2/listings/pages?trackingId=sparse-tracking')) {
         return createJsonResponse(200, {
-          items: [{trackingId: 'fallback-1', id: 'listing-x', name: 'Listing X', url: '/x'}],
+          items: [{name: 'Sparse Listing', matching: {url: '/sparse-listing'}}],
         });
       }
 
@@ -103,9 +241,100 @@ describe('cmh-config-service', () => {
     });
 
     const result = await service.getTrackingData();
+    const sparse = result.find((entry) => entry.trackingId === 'sparse-tracking');
 
-    expect(result.map((entry) => entry.trackingId).sort()).toEqual(['fallback-1', 'fallback-2']);
+    expect(sparse).toBeDefined();
+    expect(sparse?.listings.some((listing) => listing.id === 'sparse-listing')).toBe(true);
+
+    const urls = (fetchMock.mock.calls as unknown[][]).map((call) => String(call[0]));
+    expect(urls).toContain(
+      'https://platform.cloud.coveo.com/rest/organizations/my-org/commerce/v2/listings/pages?trackingId=sparse-tracking'
+    );
+  });
+
+  it('falls back to tracking-scoped listing pages endpoint when primary mapping is unavailable', async () => {
+    const fetchMock = vi.fn(async (input: URL | RequestInfo) => {
+      const url = String(input);
+      if (url.includes('/trackingidcatalogmappings')) {
+        return createJsonResponse(500, {message: 'error'});
+      }
+
+      if (url.includes('/commerce/v2/listings/pages?trackingId=fallback-1')) {
+        return createJsonResponse(200, {
+          items: [{id: 'listing-x', name: 'Listing X', url: '/x'}],
+        });
+      }
+
+      return createJsonResponse(404, {message: 'unknown'});
+    });
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        trackingId: 'fallback-1',
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    const result = await service.getTrackingData();
+
+    expect(result.map((entry) => entry.trackingId).sort()).toEqual(['fallback-1']);
     const fallbackOne = result.find((entry) => entry.trackingId === 'fallback-1');
     expect(fallbackOne?.listings[0]?.id).toBe('listing-x');
+  });
+
+  it('issues tracking-scoped listing page fallback requests and attributes rows missing trackingId', async () => {
+    const fetchMock = vi.fn(async (input: URL | RequestInfo) => {
+      const url = String(input);
+
+      if (url.includes('/trackingidcatalogmappings')) {
+        return createJsonResponse(500, {message: 'error'});
+      }
+
+      if (url.includes('/commerce/v2/listings/pages?trackingId=fallback-1')) {
+        return createJsonResponse(200, {
+          items: [{id: 'listing-scoped', name: 'Scoped Listing', url: '/scoped'}],
+        });
+      }
+
+      if (url.includes('/commerce/v2/listings/pages')) {
+        return createJsonResponse(200, {
+          items: [],
+        });
+      }
+
+      return createJsonResponse(404, {message: 'unknown'});
+    });
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        trackingId: 'fallback-1',
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    const result = await service.getTrackingData();
+    const fallbackOne = result.find((entry) => entry.trackingId === 'fallback-1');
+
+    expect(fallbackOne).toBeDefined();
+    expect(fallbackOne?.listings.some((listing) => listing.id === 'listing-scoped')).toBe(true);
+
+    const urls = (fetchMock.mock.calls as unknown[][]).map((call) => String(call[0]));
+    expect(urls).toContain(
+      'https://platform.cloud.coveo.com/rest/organizations/my-org/commerce/v2/listings/pages?trackingId=fallback-1'
+    );
+    expect(urls.some((url) => url.includes('/configurations/search'))).toBe(false);
+    expect(urls.some((url) => url.includes('/configurations/listings'))).toBe(false);
   });
 });

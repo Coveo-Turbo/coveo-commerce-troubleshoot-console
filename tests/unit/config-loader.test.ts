@@ -23,6 +23,15 @@ describe('config-loader', () => {
     expect(config.cmhAccessToken).toBe('cmh-token');
   });
 
+  it('loads default product template preset id when provided', () => {
+    const config = loadRuntimeConfig({
+      ...validConfig,
+      defaultProductTemplatePresetId: 'atomic-custom-1',
+    });
+
+    expect(config.defaultProductTemplatePresetId).toBe('atomic-custom-1');
+  });
+
   it('throws ENGINE domain error when engine token is missing', () => {
     expect(() =>
       loadRuntimeConfig({

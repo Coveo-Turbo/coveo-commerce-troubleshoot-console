@@ -4,6 +4,7 @@ export type AppRuntimeConfig = {
   cmhAccessToken: string;
   hostedPageName: string;
   hostedPageId?: string;
+  defaultProductTemplatePresetId?: string;
   defaults: {
     trackingId?: string;
     language: string;

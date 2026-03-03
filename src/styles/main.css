@@ -2,18 +2,29 @@
 .troubleshoot-root {
   --tc-font-sans: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
   --tc-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
-  --tc-bg: radial-gradient(circle at top left, #fdf6e9, #f3ece1 48%, #ece4d7 100%);
-  --tc-surface: rgba(255, 255, 255, 0.86);
-  --tc-border: rgba(112, 84, 42, 0.24);
-  --tc-ink: #231b10;
-  --tc-muted: #5a4b38;
-  --tc-accent: #0b6b60;
-  --tc-danger: #a3382b;
+
+  --tc-bg:
+    radial-gradient(circle at 4% 1%, rgba(88, 152, 230, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 20%, rgba(186, 212, 248, 0.3), transparent 45%),
+    linear-gradient(165deg, #eaf2fb 0%, #dce7f4 100%);
+  --tc-surface: rgba(255, 255, 255, 0.88);
+  --tc-surface-solid: #ffffff;
+  --tc-border: #c6d4e9;
+  --tc-border-strong: #abc0dd;
+  --tc-ink: #112a4f;
+  --tc-muted: #4f668a;
+  --tc-accent: #1f74d3;
+  --tc-accent-soft: #eef5ff;
+  --tc-accent-glow: rgba(39, 122, 213, 0.28);
+  --tc-mode-track: #e7eef8;
+  --tc-mode-idle: #3c5378;
+  --tc-danger: #b42318;
+  --tc-shadow: 0 16px 38px rgba(19, 41, 78, 0.12);
 
   font-family: var(--tc-font-sans);
   color: var(--tc-ink);
   min-height: 100vh;
-  padding: 1.4rem;
+  padding: 1.25rem;
   background: var(--tc-bg);
   box-sizing: border-box;
 }
@@ -23,32 +34,6 @@
   box-sizing: border-box;
 }
 
-[data-template='troubleshoot'] .tc-panel,
-[data-template='troubleshoot'] .tc-session,
-[data-template='troubleshoot'] .tc-modal,
-.troubleshoot-root .tc-panel,
-.troubleshoot-root .tc-session,
-.troubleshoot-root .tc-modal {
-  border: 1px solid var(--tc-border);
-  border-radius: 14px;
-  background: var(--tc-surface);
-  backdrop-filter: blur(4px);
-}
-
-[data-template='troubleshoot'] .tc-panel,
-.troubleshoot-root .tc-panel {
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-[data-template='troubleshoot'] .tc-panel__header,
-.troubleshoot-root .tc-panel__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-}
-
 [data-template='troubleshoot'] h1,
 [data-template='troubleshoot'] h2,
 [data-template='troubleshoot'] h3,
@@ -56,41 +41,129 @@
 .troubleshoot-root h2,
 .troubleshoot-root h3 {
   margin: 0;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+[data-template='troubleshoot'] .tc-panel,
+[data-template='troubleshoot'] .tc-session,
+[data-template='troubleshoot'] .tc-modal,
+.troubleshoot-root .tc-panel,
+.troubleshoot-root .tc-session,
+.troubleshoot-root .tc-modal {
+  border: 1px solid var(--tc-border);
+  border-radius: 20px;
+  background: var(--tc-surface);
+  box-shadow: var(--tc-shadow);
+  backdrop-filter: blur(8px);
+}
+
+[data-template='troubleshoot'] .tc-hero,
+.troubleshoot-root .tc-hero {
+  margin-bottom: 0.9rem;
+}
+
+[data-template='troubleshoot'] .tc-hero__kicker,
+.troubleshoot-root .tc-hero__kicker {
+  margin: 0;
+  color: #2f4f7f;
+  font-family: var(--tc-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+[data-template='troubleshoot'] .tc-hero__title,
+.troubleshoot-root .tc-hero__title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  color: #102a54;
+}
+
+[data-template='troubleshoot'] .tc-hero__subtitle,
+.troubleshoot-root .tc-hero__subtitle {
+  margin: 0.36rem 0 0;
+  color: var(--tc-muted);
+  font-size: clamp(0.96rem, 1.18vw, 1.16rem);
+  letter-spacing: -0.01em;
+  max-width: 58ch;
+}
+
+[data-template='troubleshoot'] .tc-panel,
+.troubleshoot-root .tc-panel {
+  padding: 1.15rem;
+  margin-bottom: 1rem;
+}
+
+[data-template='troubleshoot'] .tc-panel__header,
+.troubleshoot-root .tc-panel__header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-template='troubleshoot'] .tc-panel__kicker,
+.troubleshoot-root .tc-panel__kicker {
+  margin: 0;
+  color: var(--tc-muted);
+  font-family: var(--tc-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  font-weight: 500;
 }
 
 [data-template='troubleshoot'] .tc-panel__controls,
 .troubleshoot-root .tc-panel__controls {
-  margin-top: 1rem;
+  margin-top: 1.1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.92rem;
   transition: opacity 180ms ease, max-height 180ms ease;
-  max-height: 600px;
+  max-height: 760px;
   opacity: 1;
   overflow: hidden;
 }
 
 [data-template='troubleshoot'] .tc-panel__controls.is-minimized,
 .troubleshoot-root .tc-panel__controls.is-minimized {
-  max-height: 0;
-  opacity: 0;
-  margin-top: 0;
+  max-height: none;
+  opacity: 1;
+}
+
+[data-template='troubleshoot'] .tc-panel__controls.is-minimized > :not([data-minimize-keep='true']),
+.troubleshoot-root .tc-panel__controls.is-minimized > :not([data-minimize-keep='true']) {
+  display: none;
+}
+
+[data-template='troubleshoot'] .tc-panel__controls.is-minimized,
+.troubleshoot-root .tc-panel__controls.is-minimized {
+  margin-top: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 [data-template='troubleshoot'] .field,
 .troubleshoot-root .field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.42rem;
+}
+
+[data-template='troubleshoot'] .field-actions,
+.troubleshoot-root .field-actions {
+  grid-column: 1 / -1;
 }
 
 [data-template='troubleshoot'] .field span,
 .troubleshoot-root .field span {
   color: var(--tc-muted);
-  font-size: 0.83rem;
+  font-size: 0.74rem;
+  font-family: var(--tc-font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
+  font-weight: 500;
 }
 
 [data-template='troubleshoot'] select,
@@ -112,37 +185,79 @@
 .troubleshoot-root input,
 .troubleshoot-root textarea {
   border: 1px solid var(--tc-border);
-  border-radius: 10px;
-  padding: 0.55rem 0.62rem;
-  background: rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  min-height: 2.62rem;
+  padding: 0.56rem 0.74rem;
+  background: var(--tc-surface-solid);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  font-family: var(--tc-font-mono);
+  font-size: 0.9rem;
+  color: #16345f;
+}
+
+[data-template='troubleshoot'] select:focus,
+[data-template='troubleshoot'] input:focus,
+[data-template='troubleshoot'] textarea:focus,
+.troubleshoot-root select:focus,
+.troubleshoot-root input:focus,
+.troubleshoot-root textarea:focus {
+  outline: none;
+  border-color: var(--tc-accent);
+  box-shadow: 0 0 0 3px rgba(30, 91, 216, 0.16);
 }
 
 [data-template='troubleshoot'] textarea,
 .troubleshoot-root textarea {
   font-family: var(--tc-font-mono);
-  font-size: 0.83rem;
+  font-size: 0.82rem;
+}
+
+[data-template='troubleshoot'] .template-editor,
+.troubleshoot-root .template-editor {
+  min-height: 10rem;
+  line-height: 1.45;
 }
 
 [data-template='troubleshoot'] .mode-switch,
 .troubleshoot-root .mode-switch {
-  display: inline-flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.28rem;
   border: 1px solid var(--tc-border);
-  border-radius: 10px;
-  overflow: hidden;
+  border-radius: 999px;
+  min-height: 2.62rem;
+  padding: 0.14rem;
+  background: var(--tc-mode-track);
 }
 
 [data-template='troubleshoot'] .mode-button,
 .troubleshoot-root .mode-button {
   border: 0;
+  border-radius: 999px;
   background: transparent;
-  padding: 0.45rem 0.85rem;
+  min-height: calc(2.62rem - 0.28rem);
+  padding: 0.5rem 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  color: var(--tc-mode-idle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 160ms ease;
 }
 
 [data-template='troubleshoot'] .mode-button.active,
 .troubleshoot-root .mode-button.active {
-  background: var(--tc-accent);
-  color: #f5faf9;
+  background: linear-gradient(135deg, #1f74d3 0%, #2b8cf3 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 18px var(--tc-accent-glow);
 }
 
 [data-template='troubleshoot'] .button-row,
@@ -150,86 +265,224 @@
   display: flex;
   gap: 0.45rem;
   flex-wrap: wrap;
+  align-items: end;
+}
+
+[data-template='troubleshoot'] .field-inline,
+.troubleshoot-root .field-inline {
+  display: grid;
+  gap: 0.25rem;
+  min-width: min(240px, 100%);
+}
+
+[data-template='troubleshoot'] .field-inline span,
+.troubleshoot-root .field-inline span {
+  font-size: 0.68rem;
+}
+
+[data-template='troubleshoot'] .field-inline select,
+.troubleshoot-root .field-inline select {
+  min-width: min(240px, 100%);
 }
 
 [data-template='troubleshoot'] button,
 .troubleshoot-root button {
-  border: 1px solid var(--tc-border);
-  border-radius: 9px;
-  padding: 0.45rem 0.72rem;
+  border: 1px solid var(--tc-border-strong);
+  border-radius: 14px;
+  min-height: 2.38rem;
+  padding: 0.45rem 0.78rem;
   cursor: pointer;
-  background: #fff;
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+[data-template='troubleshoot'] button:hover,
+.troubleshoot-root button:hover {
+  border-color: var(--tc-accent);
+  color: var(--tc-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(25, 74, 140, 0.16);
+}
+
+[data-template='troubleshoot'] .mode-button:hover,
+.troubleshoot-root .mode-button:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+[data-template='troubleshoot'] .mode-button.active:hover,
+.troubleshoot-root .mode-button.active:hover {
+  color: #ffffff;
+  box-shadow: 0 8px 18px var(--tc-accent-glow);
+}
+
+[data-template='troubleshoot'] button[data-action='run-request'],
+.troubleshoot-root button[data-action='run-request'] {
+  background: linear-gradient(140deg, #1f5dab 0%, #2e82de 100%);
+  color: #ffffff;
+  border-color: rgba(28, 89, 166, 0.5);
+}
+
+[data-template='troubleshoot'] button[data-action='run-request']:hover,
+.troubleshoot-root button[data-action='run-request']:hover {
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(39, 122, 213, 0.28);
 }
 
 [data-template='troubleshoot'] .icon-button,
 .troubleshoot-root .icon-button {
-  width: 2rem;
-  height: 2rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  min-height: 1.9rem;
   display: inline-grid;
   place-items: center;
+  padding: 0;
 }
 
 [data-template='troubleshoot'] .danger,
 .troubleshoot-root .danger {
-  border-color: rgba(163, 56, 43, 0.42);
-  color: var(--tc-danger);
+  border-color: rgba(165, 41, 36, 0.44);
+  color: #ffffff;
+  background: linear-gradient(140deg, #932828 0%, #c04c4c 100%);
+}
+
+[data-template='troubleshoot'] .danger:hover,
+.troubleshoot-root .danger:hover {
+  color: #ffffff;
+  border-color: rgba(145, 31, 31, 0.6);
+  box-shadow: 0 8px 18px rgba(173, 45, 45, 0.3);
 }
 
 [data-template='troubleshoot'] .tc-session,
 .troubleshoot-root .tc-session {
-  padding: 1rem;
+  padding: 0.95rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+[data-template='troubleshoot'] .tc-session.is-minimized,
+.troubleshoot-root .tc-session.is-minimized {
+  border-color: var(--tc-border-strong);
+}
+
+[data-template='troubleshoot'] .tc-session__header,
+.troubleshoot-root .tc-session__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-template='troubleshoot'] .tc-session__subtitle,
+.troubleshoot-root .tc-session__subtitle {
+  margin: 0.2rem 0 0;
+  color: var(--tc-muted);
+  font-size: 0.8rem;
+}
+
+[data-template='troubleshoot'] .tc-session__actions,
+.troubleshoot-root .tc-session__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+[data-template='troubleshoot'] .status-chip,
+.troubleshoot-root .status-chip {
+  max-width: min(42vw, 560px);
+  border: 1px solid var(--tc-border);
+  border-radius: 999px;
+  padding: 0.36rem 0.72rem;
+  background: var(--tc-accent-soft);
+  color: #204371;
+  font-size: 0.76rem;
+  font-family: var(--tc-font-mono);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 [data-template='troubleshoot'] .pills,
 .troubleshoot-root .pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0.75rem 0;
+  gap: 0.5rem;
+  margin: 0.82rem 0 0;
 }
 
 [data-template='troubleshoot'] .pill,
 .troubleshoot-root .pill {
   border: 1px solid var(--tc-border);
   border-radius: 999px;
-  padding: 0.3rem 0.62rem;
-  background: rgba(255, 255, 255, 0.88);
-  font-size: 0.78rem;
+  padding: 0.34rem 0.72rem;
+  background: #f5f9ff;
+  font-family: var(--tc-font-mono);
+  font-size: 0.79rem;
+  color: #1f426d;
+}
+
+[data-template='troubleshoot'] .tc-session__details,
+.troubleshoot-root .tc-session__details {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+  transition: opacity 180ms ease, max-height 180ms ease, margin-top 180ms ease;
+  max-height: 65vh;
+  opacity: 1;
+  overflow: hidden;
+}
+
+[data-template='troubleshoot'] .tc-session__details.is-minimized,
+.troubleshoot-root .tc-session__details.is-minimized {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
 }
 
 [data-template='troubleshoot'] .session-grid,
 .troubleshoot-root .session-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.72rem;
 }
 
 [data-template='troubleshoot'] .session-row,
 .troubleshoot-root .session-row {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.34rem;
+  border: 1px solid #d3deee;
+  border-radius: 14px;
+  background: rgba(243, 248, 255, 0.85);
+  padding: 0.72rem 0.8rem;
 }
 
 [data-template='troubleshoot'] .session-row span,
 .troubleshoot-root .session-row span {
   color: var(--tc-muted);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 [data-template='troubleshoot'] code,
 .troubleshoot-root code {
   font-family: var(--tc-font-mono);
-  font-size: 0.79rem;
+  font-size: 0.78rem;
   word-break: break-all;
 }
 
 [data-template='troubleshoot'] .status-line,
 .troubleshoot-root .status-line {
   color: var(--tc-muted);
-  margin: 0.8rem 0;
+  margin: 0.45rem 0;
 }
 
 [data-template='troubleshoot'] .result-panel,
@@ -237,12 +490,31 @@
   margin: 0;
   max-height: 50vh;
   overflow: auto;
-  border: 1px solid var(--tc-border);
-  border-radius: 10px;
+  border: 1px solid #192f4e;
+  border-radius: 11px;
   padding: 0.75rem;
-  background: #fff;
+  background: #0f1f35;
+  color: #d8e4f6;
   font-family: var(--tc-font-mono);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+[data-template='troubleshoot'] .tc-atomic-shell,
+.troubleshoot-root .tc-atomic-shell {
+  border: 1px solid var(--tc-border);
+  border-radius: 16px;
+  background: var(--tc-surface);
+  box-shadow: var(--tc-shadow);
+  padding: 0.75rem;
+}
+
+[data-template='troubleshoot'] .tc-atomic-root,
+.troubleshoot-root .tc-atomic-root {
+  min-height: 65vh;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
 }
 
 [data-template='troubleshoot'] .tc-modal,
@@ -287,6 +559,7 @@
   border: 1px solid var(--tc-border);
   border-radius: 10px;
   padding: 0.55rem 0.65rem;
+  background: #ffffff;
 }
 
 [data-template='troubleshoot'] .preset-row code,
@@ -296,17 +569,22 @@
 
 [data-template='troubleshoot'] .init-error,
 .troubleshoot-root .init-error {
-  border: 1px solid rgba(163, 56, 43, 0.35);
+  border: 1px solid rgba(180, 35, 24, 0.35);
   border-radius: 12px;
   padding: 1rem;
-  background: rgba(255, 241, 239, 0.9);
+  background: rgba(255, 241, 239, 0.94);
   color: #5a1e16;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   [data-template='troubleshoot'] .troubleshoot-root,
   .troubleshoot-root {
-    padding: 0.8rem;
+    padding: 0.85rem;
+  }
+
+  [data-template='troubleshoot'] .tc-panel,
+  .troubleshoot-root .tc-panel {
+    padding: 0.92rem;
   }
 
   [data-template='troubleshoot'] .tc-panel__controls,
@@ -314,8 +592,23 @@
     grid-template-columns: 1fr;
   }
 
-  [data-template='troubleshoot'] .field-actions,
-  .troubleshoot-root .field-actions {
-    grid-column: auto;
+  [data-template='troubleshoot'] .tc-hero__subtitle,
+  .troubleshoot-root .tc-hero__subtitle {
+    font-size: 1rem;
+  }
+
+  [data-template='troubleshoot'] .mode-button,
+  .troubleshoot-root .mode-button {
+    font-size: 0.84rem;
+  }
+
+  [data-template='troubleshoot'] .status-chip,
+  .troubleshoot-root .status-chip {
+    max-width: 62vw;
+  }
+
+  [data-template='troubleshoot'] .session-grid,
+  .troubleshoot-root .session-grid {
+    grid-template-columns: 1fr;
   }
 }
