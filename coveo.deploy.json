@@ -1,12 +1,12 @@
 {
-  "name": "${APP_HOSTED_PAGE_NAME}",
+  "name": "commerce-troubleshoot-console-demo",
   "dir": "dist/bundle",
   "htmlEntryFile": {
     "path": "troubleshoot.html"
   },
   "javascriptEntryFiles": [
     {
-      "path": "js/${MAIN_JS_FILE}",
+      "path": "js/app-C6XnBoCI.js",
       "isModule": true
     }
   ],

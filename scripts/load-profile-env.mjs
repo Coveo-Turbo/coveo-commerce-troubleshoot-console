@@ -37,6 +37,38 @@ function getProfilePath(profile) {
   return path.resolve(projectRoot, 'profiles', `${profile}.env`);
 }
 
+async function getAvailableProfiles() {
+  const profilesDir = path.resolve(projectRoot, 'profiles');
+  const entries = await fs.readdir(profilesDir, {withFileTypes: true});
+  return entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((name) => name.endsWith('.env'))
+    .filter((name) => !name.startsWith('examples'))
+    .map((name) => name.replace(/\.env$/i, ''))
+    .sort();
+}
+
+async function resolveProfile(profile) {
+  if (profile?.trim()) {
+    return profile.trim();
+  }
+
+  const fromEnv = process.env.APP_PROFILE?.trim();
+  if (fromEnv) {
+    return fromEnv;
+  }
+
+  const available = await getAvailableProfiles();
+  if (available.length === 1) {
+    return available[0];
+  }
+
+  const suffix =
+    available.length > 0 ? ` Available profiles: ${available.join(', ')}` : ' No profiles found.';
+  throw new Error(`Missing profile. Usage: --profile <name>.${suffix}`);
+}
+
 function assertRequiredKeys(env) {
   const missing = REQUIRED_KEYS.filter((key) => !env[key]?.trim());
   if (missing.length > 0) {
@@ -63,18 +95,16 @@ export function mapProfileToRuntimeConfig(env) {
 }
 
 export async function loadProfileEnv(profile) {
-  if (!profile) {
-    throw new Error('Missing profile. Usage: --profile <name>');
-  }
+  const resolvedProfile = await resolveProfile(profile);
 
-  const profilePath = getProfilePath(profile);
+  const profilePath = getProfilePath(resolvedProfile);
   const file = await fs.readFile(profilePath, 'utf8');
   const parsed = dotenv.parse(file);
 
   assertRequiredKeys(parsed);
 
   return {
-    profile,
+    profile: resolvedProfile,
     profilePath,
     env: parsed,
   };
@@ -96,10 +126,10 @@ export {projectRoot};
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const profile = getProfileFromArgv();
-  const {env, profilePath} = await loadProfileEnv(profile);
+  const {env, profilePath, profile: resolvedProfile} = await loadProfileEnv(profile);
   const runtimeConfig = mapProfileToRuntimeConfig(env);
   const output = await writeGeneratedRuntimeConfig(runtimeConfig);
 
-  console.log(`[profile] Loaded ${profile} from ${profilePath}`);
+  console.log(`[profile] Loaded ${resolvedProfile} from ${profilePath}`);
   console.log(`[profile] Wrote runtime config: ${output}`);
 }

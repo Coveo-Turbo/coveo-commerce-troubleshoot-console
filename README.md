@@ -58,6 +58,8 @@ tests/
 - `npm run test:e2e`
 - `npm run lint`
 
+If `--profile` is omitted, hosted scripts auto-select the single profile under `profiles/*.env` (or use `APP_PROFILE`).
+
 ## Hosted Build Output
 
 `npm run build:hosted -- --profile <name>` generates:
