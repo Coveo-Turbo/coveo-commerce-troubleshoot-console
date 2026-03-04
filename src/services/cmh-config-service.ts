@@ -362,7 +362,7 @@ export class CmhConfigService {
   private readonly accessToken: string;
   private readonly defaults: CmhDefaults;
   private readonly fetchImpl: FetchLike;
-  private readonly baseUrl: string;
+  private baseUrl: string;
   private readonly requestTimeoutMs: number;
   private requestTrace: CmhRequestTraceEntry[] = [];
 
@@ -454,6 +454,7 @@ export class CmhConfigService {
       const retryBaseUrl = resolveRetryBaseUrl(activeBaseUrl, response.status, responseBody);
       if (retryBaseUrl) {
         activeBaseUrl = retryBaseUrl;
+        this.baseUrl = retryBaseUrl;
         continue;
       }
 
