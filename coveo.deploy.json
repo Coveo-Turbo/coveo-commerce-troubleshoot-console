@@ -6,7 +6,11 @@
   },
   "javascriptEntryFiles": [
     {
-      "path": "js/app-C6XnBoCI.js",
+      "path": "js/runtime-config.js",
+      "isModule": true
+    },
+    {
+      "path": "js/app.js",
       "isModule": true
     }
   ],

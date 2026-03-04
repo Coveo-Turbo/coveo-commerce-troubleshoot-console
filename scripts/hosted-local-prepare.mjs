@@ -1,25 +1,52 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {spawnSync} from 'node:child_process';
 import {
-  getProfileFromArgv,
-  loadProfileEnv,
-  mapProfileToRuntimeConfig,
   projectRoot,
+  resolveDeployRequestFromContext,
   writeGeneratedRuntimeConfig,
 } from './load-profile-env.mjs';
 
-async function main() {
-  const profile = getProfileFromArgv();
-  const {env} = await loadProfileEnv(profile);
-  const runtimeConfig = mapProfileToRuntimeConfig(env);
+function ensureServiceBuild() {
+  const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const result = spawnSync(command, ['run', 'build:service'], {
+    cwd: projectRoot,
+    stdio: 'inherit',
+  });
 
-  await writeGeneratedRuntimeConfig(runtimeConfig);
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
+}
+
+async function loadServiceModule() {
+  return import(pathToFileURL(path.resolve(projectRoot, 'packages', 'commerce-troubleshoot-deployer', 'dist', 'index.js')).href);
+}
+
+async function main() {
+  ensureServiceBuild();
+
+  const {resolveRuntimeConfigForRequest, serializeWindowRuntimeConfig} = await loadServiceModule();
+  const request = resolveDeployRequestFromContext(process.argv.slice(2), {
+    dryRun: true,
+  });
+
+  const {payload, keyInfo} = await resolveRuntimeConfigForRequest(request, {
+    logger: (message) => console.log(message),
+    managedKeyCachePath: path.resolve(projectRoot, '.cache', 'managed-keys.json'),
+  });
+
+  await writeGeneratedRuntimeConfig(payload);
 
   const outputPath = path.resolve(projectRoot, 'hosted-local', 'generated-config.js');
-  const content = `window.__APP_CONFIG = ${JSON.stringify(runtimeConfig, null, 2)};\n`;
-  await fs.writeFile(outputPath, content, 'utf8');
+  await fs.writeFile(outputPath, serializeWindowRuntimeConfig(payload), 'utf8');
 
-  console.log(`[hosted-local] Prepared profile "${profile}" at ${outputPath}`);
+  console.log(
+    `[hosted-local] Prepared runtime config at ${outputPath} (source=${keyInfo.source}, created=${String(
+      keyInfo.created
+    )}).`
+  );
 }
 
 await main();

@@ -185,6 +185,7 @@ export async function bootstrap(): Promise<void> {
       organizationId: config.organizationId,
       accessToken: config.cmhAccessToken,
       defaults: config.defaults,
+      ...(config.region ? {region: config.region} : {}),
     });
 
     const page = new TroubleshootPage({

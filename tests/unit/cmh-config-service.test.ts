@@ -337,4 +337,97 @@ describe('cmh-config-service', () => {
     expect(urls.some((url) => url.includes('/configurations/search'))).toBe(false);
     expect(urls.some((url) => url.includes('/configurations/listings'))).toBe(false);
   });
+
+  it('uses region-specific platform host for EU and CA regions', async () => {
+    const fetchMock = vi.fn(async () => createJsonResponse(200, {items: []}));
+
+    const euService = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      region: 'eu-west-1',
+      defaults: {
+        language: 'en',
+        country: 'GB',
+        currency: 'GBP',
+        viewUrl: 'https://example.co.uk/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    await euService.getTrackingData();
+    const euFirstUrl = String((fetchMock.mock.calls as unknown[][])[0]?.[0] ?? '');
+    expect(euFirstUrl).toContain('https://platform-eu.cloud.coveo.com');
+
+    fetchMock.mockClear();
+
+    const caService = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      region: 'ca-central-1',
+      defaults: {
+        language: 'en',
+        country: 'CA',
+        currency: 'CAD',
+        viewUrl: 'https://example.ca/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    await caService.getTrackingData();
+    const caFirstUrl = String((fetchMock.mock.calls as unknown[][])[0]?.[0] ?? '');
+    expect(caFirstUrl).toContain('https://platform-ca.cloud.coveo.com');
+  });
+
+  it('defaults to US platform host for us region', async () => {
+    const fetchMock = vi.fn(async () => createJsonResponse(200, {items: []}));
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      region: 'us-east-2',
+      defaults: {
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    await service.getTrackingData();
+
+    const firstUrl = String((fetchMock.mock.calls as unknown[][])[0]?.[0] ?? '');
+    expect(firstUrl).toContain('https://platform.cloud.coveo.com');
+  });
+
+  it('retries on allowed-region mismatch response', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        createJsonResponse(400, {
+          message:
+            "Organization: 'my-org' does not accept requests in current region 'us-east-2'. Allowed region(s): '[eu-west-1]'.",
+          errorCode: 'INVALID_REQUEST',
+        })
+      )
+      .mockResolvedValue(createJsonResponse(200, {items: []}));
+
+    const service = new CmhConfigService({
+      organizationId: 'my-org',
+      accessToken: 'cmh-token',
+      defaults: {
+        language: 'en',
+        country: 'US',
+        currency: 'USD',
+        viewUrl: 'https://example.com/',
+      },
+      fetchImpl: fetchMock as typeof fetch,
+    });
+
+    await service.getTrackingData();
+
+    const urls = (fetchMock.mock.calls as unknown[][]).map((call) => String(call[0]));
+    expect(urls[0]).toContain('https://platform.cloud.coveo.com');
+    expect(urls[1]).toContain('https://platform-eu.cloud.coveo.com');
+  });
 });

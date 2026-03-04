@@ -3,16 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:service": "npm run build --workspace @coveops/commerce-troubleshoot-deployer",
+    "build:service:artifact": "node ./scripts/build-service-artifact.mjs",
+    "build:service:prepare": "npm run build:service:artifact && npm run build:service",
     "build:hosted": "node ./scripts/build-hosted.mjs",
-    "deploy:hosted": "node ./scripts/build-hosted.mjs && coveo ui:deploy --config coveo.deploy.json",
+    "deploy:hosted": "node ./scripts/deploy-hosted.mjs",
     "prepare:hosted:local": "node ./scripts/hosted-local-prepare.mjs",
     "hosted:local": "node ./scripts/hosted-local-serve.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && npm run typecheck",
     "test": "vitest run",
+    "test:service": "vitest run tests/unit/deployer",
     "test:e2e": "playwright test"
   },
   "dependencies": {

@@ -7,3 +7,5 @@ test-results/
 hosted-local/generated-config.js
 .env
 *.local
+packages/commerce-troubleshoot-deployer/dist/
+.cache/

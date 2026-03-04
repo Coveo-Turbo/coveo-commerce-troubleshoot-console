@@ -1,52 +1,53 @@
-import fs from 'node:fs/promises';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {spawnSync} from 'node:child_process';
 import {projectRoot} from './load-profile-env.mjs';
 
-function applyPlaceholders(value, replacements) {
-  if (typeof value === 'string') {
-    return Object.entries(replacements).reduce(
-      (accumulator, [token, replacement]) =>
-        accumulator.replaceAll(token, replacement ?? ''),
-      value
-    );
+function readArg(argv, name) {
+  const index = argv.findIndex((value) => value === `--${name}`);
+  if (index === -1) {
+    return '';
   }
 
-  if (Array.isArray(value)) {
-    return value.map((item) => applyPlaceholders(item, replacements));
-  }
-
-  if (value && typeof value === 'object') {
-    const record = value;
-    const transformed = {};
-
-    for (const [key, nestedValue] of Object.entries(record)) {
-      transformed[key] = applyPlaceholders(nestedValue, replacements);
-    }
-
-    return transformed;
-  }
-
-  return value;
+  return argv[index + 1] ?? '';
 }
 
-export async function generateDeployConfig({profileEnv, mainJsFile}) {
-  const templatePath = path.resolve(projectRoot, 'coveo.deploy.template.json');
-  const outputPath = path.resolve(projectRoot, 'coveo.deploy.json');
-
-  const rawTemplate = await fs.readFile(templatePath, 'utf8');
-  const template = JSON.parse(rawTemplate);
-
-  const generated = applyPlaceholders(template, {
-    '${APP_HOSTED_PAGE_NAME}': profileEnv.APP_HOSTED_PAGE_NAME,
-    '${APP_HOSTED_PAGE_ID}': profileEnv.APP_HOSTED_PAGE_ID || '',
-    '${MAIN_JS_FILE}': mainJsFile,
+function ensureServiceBuild() {
+  const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const result = spawnSync(command, ['run', 'build:service'], {
+    cwd: projectRoot,
+    stdio: 'inherit',
   });
 
-  await fs.writeFile(outputPath, `${JSON.stringify(generated, null, 2)}\n`, 'utf8');
-  return outputPath;
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  console.error('This script is intended to be used by build-hosted.mjs');
-  process.exit(1);
+async function loadServiceModule() {
+  return import(pathToFileURL(path.resolve(projectRoot, 'packages', 'commerce-troubleshoot-deployer', 'dist', 'index.js')).href);
 }
+
+async function main() {
+  ensureServiceBuild();
+
+  const pageName = readArg(process.argv.slice(2), 'page-name') || process.env.APP_HOSTED_PAGE_NAME;
+  if (!pageName?.trim()) {
+    throw new Error('Missing hosted page name. Provide --page-name or APP_HOSTED_PAGE_NAME.');
+  }
+
+  const outputPath =
+    readArg(process.argv.slice(2), 'output') || path.resolve(projectRoot, 'coveo.deploy.json');
+  const bundleRelativeDir = readArg(process.argv.slice(2), 'bundle-dir') || 'dist/bundle';
+
+  const {createDeployConfig, writeDeployConfig} = await loadServiceModule();
+  const config = createDeployConfig({
+    hostedPageName: pageName,
+    bundleRelativeDir,
+  });
+
+  await writeDeployConfig(outputPath, config);
+  console.log(`[deploy-config] Wrote ${outputPath}`);
+}
+
+await main();

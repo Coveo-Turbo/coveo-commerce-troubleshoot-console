@@ -24,7 +24,7 @@ async function main() {
 
   const {deployTroubleshootConsole} = await loadServiceModule();
   const request = resolveDeployRequestFromContext(process.argv.slice(2), {
-    dryRun: true,
+    dryRun: false,
     outputRootDir: projectRoot,
     bundleRelativeDir: 'dist/bundle',
     deployConfigRelativePath: 'coveo.deploy.json',
@@ -35,8 +35,17 @@ async function main() {
     managedKeyCachePath: path.resolve(projectRoot, '.cache', 'managed-keys.json'),
   });
 
-  console.log(`[hosted] Bundle directory: ${result.bundleDir}`);
-  console.log(`[hosted] Deploy config: ${result.deployConfigPath}`);
+  console.log(`[deploy] Hosted page name: ${result.hostedPageName}`);
+  if (result.hostedPageId) {
+    console.log(`[deploy] Hosted page id: ${result.hostedPageId}`);
+  }
+  console.log(`[deploy] Deploy config: ${result.deployConfigPath}`);
+  if (Array.isArray(result.diagnostics) && result.diagnostics.length > 0) {
+    console.log('[deploy] Diagnostics:');
+    for (const line of result.diagnostics) {
+      console.log(line);
+    }
+  }
 }
 
 await main();

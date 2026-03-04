@@ -11,6 +11,7 @@ type RuntimeDefaultsCandidate = {
 
 type RuntimeConfigCandidate = {
   organizationId?: string;
+  region?: string;
   engineAccessToken?: string;
   cmhAccessToken?: string;
   hostedPageName?: string;
@@ -55,6 +56,7 @@ function normalizeDefaults(input: RuntimeDefaultsCandidate | undefined): AppRunt
 
 function normalizeCandidate(candidate: RuntimeConfigCandidate): AppRuntimeConfig {
   const organizationId = readString(candidate.organizationId);
+  const region = readString(candidate.region);
   const hostedPageName = readString(candidate.hostedPageName);
   const engineAccessToken = readString(candidate.engineAccessToken);
   const cmhAccessToken = readString(candidate.cmhAccessToken);
@@ -86,6 +88,7 @@ function normalizeCandidate(candidate: RuntimeConfigCandidate): AppRuntimeConfig
 
   const config: AppRuntimeConfig = {
     organizationId,
+    ...(region ? {region} : {}),
     hostedPageName,
     engineAccessToken,
     cmhAccessToken,
@@ -143,6 +146,7 @@ function getViteEnvConfig(): RuntimeConfigCandidate {
 
   const candidate: RuntimeConfigCandidate = {};
   const organizationId = readString(viteEnv.APP_ORGANIZATION_ID);
+  const region = readString(viteEnv.APP_REGION);
   const engineAccessToken = readString(viteEnv.APP_ENGINE_ACCESS_TOKEN);
   const cmhAccessToken = readString(viteEnv.APP_CMH_ACCESS_TOKEN);
   const hostedPageName = readString(viteEnv.APP_HOSTED_PAGE_NAME);
@@ -151,6 +155,9 @@ function getViteEnvConfig(): RuntimeConfigCandidate {
 
   if (organizationId) {
     candidate.organizationId = organizationId;
+  }
+  if (region) {
+    candidate.region = region;
   }
   if (engineAccessToken) {
     candidate.engineAccessToken = engineAccessToken;
