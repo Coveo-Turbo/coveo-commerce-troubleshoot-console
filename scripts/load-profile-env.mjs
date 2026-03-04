@@ -141,7 +141,9 @@ export function resolveDeployRequestFromContext(
   }
 
   if (!accessToken.trim()) {
-    throw new Error('Missing Coveo access token. Set APP_PLATFORM_ACCESS_TOKEN or run coveo auth:login.');
+    throw new Error(
+      'Missing Coveo access token. Set APP_PLATFORM_ACCESS_TOKEN or APP_ACCESS_TOKEN, or run coveo auth:login.'
+    );
   }
 
   return {

@@ -396,6 +396,10 @@ function resolvePlatformBaseUrl(region?: string, overrideBaseUrl?: string) {
     return 'https://platform-eu.cloud.coveo.com';
   }
 
+  if (normalizedRegion === 'ca' || normalizedRegion.startsWith('ca-')) {
+    return 'https://platform-ca.cloud.coveo.com';
+  }
+
   if (
     normalizedRegion === 'au' ||
     normalizedRegion.startsWith('au-') ||
