@@ -236,6 +236,39 @@ import {deployTroubleshootConsole} from '@coveops/commerce-troubleshoot-deployer
 
 Use the same request shape as above.
 
+## Publishing Deployer Package
+
+### Manual publish to npmjs
+
+```bash
+npm run build --workspace @coveops/commerce-troubleshoot-deployer
+npm publish --workspace @coveops/commerce-troubleshoot-deployer --access public
+```
+
+### Automated publish on `main`
+
+- Workflow: `.github/workflows/publish-deployer.yml`
+- Trigger: pushes to `main` that touch `packages/commerce-troubleshoot-deployer/**`
+- Auth: npm trusted publishing via GitHub OIDC (no long-lived `NPM_TOKEN` secret)
+- Guardrail: workflow checks whether `package.json` version is already published; if yes, it skips publish
+
+#### Configure npm trusted publisher
+
+On npmjs.com for package `@coveops/commerce-troubleshoot-deployer`:
+
+- Select provider: GitHub Actions
+- Organization or user: your GitHub org/user that owns this repo
+- Repository: `coveo-commerce-troubleshoot-console`
+- Workflow filename: `publish-deployer.yml` (filename only, no path)
+- Environment name: leave empty unless you add a GitHub Environment gate
+
+Notes:
+- Trusted publishing supports GitHub-hosted runners only.
+- npm trusted publishing currently requires Node `22.14+` / npm `11.5.1+` in CI (workflow uses Node `24`).
+- If the package has never been published, perform a one-time manual publish first, then attach the trusted publisher in npm package settings.
+
+When shipping a new deployer release, bump `packages/commerce-troubleshoot-deployer/package.json` version before merging to `main`.
+
 ## Key Notes
 
 - Keep `src/app/runtime-config.generated.ts` sanitized in git; it is generated at runtime/script time.
