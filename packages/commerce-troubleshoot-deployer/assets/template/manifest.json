@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "files": {
+    "troubleshoot.html": {
+      "sha256": "4b92870d61688cfcdfe00e29969a262162c7853aca48a9801de9c55c0a68d4d0",
+      "bytes": 41
+    },
+    "js/app.js": {
+      "sha256": "3621c459403cb893ef40b8c2130d6246d91eb3efd4354f91690671f79b6cab1d",
+      "bytes": 422735
+    },
+    "styles/main.css": {
+      "sha256": "b82b6a252201d7973760941d70837a2c8d4c90f35c668256392f774b3e433b70",
+      "bytes": 13082
+    }
+  }
+}

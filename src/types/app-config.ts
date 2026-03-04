@@ -1,5 +1,6 @@
 export type AppRuntimeConfig = {
   organizationId: string;
+  region?: string;
   engineAccessToken: string;
   cmhAccessToken: string;
   hostedPageName: string;

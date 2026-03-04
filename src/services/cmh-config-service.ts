@@ -9,6 +9,7 @@ type CmhConfigServiceOptions = {
   organizationId: string;
   accessToken: string;
   defaults: CmhDefaults;
+  region?: string;
   baseUrl?: string;
   fetchImpl?: FetchLike;
   requestTimeoutMs?: number;
@@ -28,6 +29,7 @@ export type CmhRequestTraceEntry = {
 
 const PAGE_SIZE = 200;
 const MAX_PAGES = 50;
+const DEFAULT_PLATFORM_BASE_URL = 'https://platform.cloud.coveo.com';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -39,6 +41,80 @@ function toArray(value: unknown): unknown[] {
 
 function toString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+function resolveCmhBaseUrl(region?: string, baseUrl?: string): string {
+  const explicitBaseUrl = toString(baseUrl);
+  if (explicitBaseUrl) {
+    return explicitBaseUrl.replace(/\/+$/, '');
+  }
+
+  const normalizedRegion = toString(region).toLowerCase();
+  if (!normalizedRegion) {
+    return DEFAULT_PLATFORM_BASE_URL;
+  }
+
+  if (normalizedRegion === 'us' || normalizedRegion.startsWith('us-')) {
+    return DEFAULT_PLATFORM_BASE_URL;
+  }
+
+  if (normalizedRegion === 'eu' || normalizedRegion.startsWith('eu-')) {
+    return 'https://platform-eu.cloud.coveo.com';
+  }
+
+  if (normalizedRegion === 'ca' || normalizedRegion.startsWith('ca-')) {
+    return 'https://platform-ca.cloud.coveo.com';
+  }
+
+  if (
+    normalizedRegion === 'au' ||
+    normalizedRegion.startsWith('au-') ||
+    normalizedRegion.startsWith('ap-') ||
+    normalizedRegion.startsWith('apac')
+  ) {
+    return 'https://platform-au.cloud.coveo.com';
+  }
+
+  return DEFAULT_PLATFORM_BASE_URL;
+}
+
+function parseAllowedRegionsFromErrorBody(errorBody: string): string[] {
+  let message = errorBody;
+  try {
+    const parsed = JSON.parse(errorBody) as Record<string, unknown>;
+    if (typeof parsed.message === 'string') {
+      message = parsed.message;
+    }
+  } catch {
+    // Keep original body when payload is not JSON.
+  }
+
+  const match = message.match(/Allowed region\(s\): '\[([^\]]+)\]'/i);
+  if (!match) {
+    return [];
+  }
+
+  const allowedRegionList = match[1] ?? '';
+  return allowedRegionList
+    .split(',')
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
+function resolveRetryBaseUrl(currentBaseUrl: string, status: number, errorBody: string): string {
+  if (status !== 400) {
+    return '';
+  }
+
+  const allowedRegions = parseAllowedRegionsFromErrorBody(errorBody);
+  for (const allowedRegion of allowedRegions) {
+    const candidate = resolveCmhBaseUrl(allowedRegion);
+    if (candidate && candidate !== currentBaseUrl) {
+      return candidate;
+    }
+  }
+
+  return '';
 }
 
 function uniqueById<T extends {id: string}>(items: T[]): T[] {
@@ -295,7 +371,7 @@ export class CmhConfigService {
     this.accessToken = options.accessToken;
     this.defaults = options.defaults;
     this.fetchImpl = options.fetchImpl ?? fetch;
-    this.baseUrl = options.baseUrl ?? 'https://platform.cloud.coveo.com';
+    this.baseUrl = resolveCmhBaseUrl(options.region, options.baseUrl);
     this.requestTimeoutMs = options.requestTimeoutMs ?? 10_000;
   }
 
@@ -319,8 +395,8 @@ export class CmhConfigService {
     return [...this.requestTrace];
   }
 
-  private buildPath(path: string): string {
-    return `${this.baseUrl}/rest/organizations/${this.organizationId}${path}`;
+  private buildPath(path: string, baseUrl = this.baseUrl): string {
+    return `${baseUrl}/rest/organizations/${this.organizationId}${path}`;
   }
 
   private withTrackingId(path: string, trackingId: string): string {
@@ -329,35 +405,58 @@ export class CmhConfigService {
   }
 
   private async requestJson(path: string): Promise<unknown> {
-    const controller = new AbortController();
-    const timeout = globalThis.setTimeout(() => controller.abort(), this.requestTimeoutMs);
+    let activeBaseUrl = this.baseUrl;
 
-    let response: Response;
-    try {
-      response = await this.fetchImpl.call(globalThis, this.buildPath(path), {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${this.accessToken}`,
-          Accept: 'application/json',
-        },
-        signal: controller.signal,
-      });
-    } catch (error) {
-      this.requestTrace.push({
-        path,
-        status: null,
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error(`CMH request timed out after ${this.requestTimeoutMs}ms for ${path}`);
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = globalThis.setTimeout(() => controller.abort(), this.requestTimeoutMs);
+
+      let response: Response;
+      try {
+        response = await this.fetchImpl.call(
+          globalThis,
+          this.buildPath(path, activeBaseUrl),
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${this.accessToken}`,
+              Accept: 'application/json',
+            },
+            signal: controller.signal,
+          }
+        );
+      } catch (error) {
+        this.requestTrace.push({
+          path,
+          status: null,
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        if (error instanceof Error && error.name === 'AbortError') {
+          throw new Error(`CMH request timed out after ${this.requestTimeoutMs}ms for ${path}`);
+        }
+        throw error;
+      } finally {
+        globalThis.clearTimeout(timeout);
       }
-      throw error;
-    } finally {
-      globalThis.clearTimeout(timeout);
-    }
 
-    if (!response.ok) {
+      if (response.ok) {
+        this.requestTrace.push({
+          path,
+          status: response.status,
+          ok: true,
+          error: '',
+        });
+        return response.json();
+      }
+
+      const responseBody = await response.text();
+      const retryBaseUrl = resolveRetryBaseUrl(activeBaseUrl, response.status, responseBody);
+      if (retryBaseUrl) {
+        activeBaseUrl = retryBaseUrl;
+        continue;
+      }
+
       this.requestTrace.push({
         path,
         status: response.status,
@@ -369,12 +468,11 @@ export class CmhConfigService {
 
     this.requestTrace.push({
       path,
-      status: response.status,
-      ok: true,
-      error: '',
+      status: null,
+      ok: false,
+      error: 'CMH request failed after retry attempts',
     });
-
-    return response.json();
+    throw new Error(`CMH request failed after retry attempts for ${path}`);
   }
 
   private readNumericField(payload: unknown, keys: string[]): number | null {
