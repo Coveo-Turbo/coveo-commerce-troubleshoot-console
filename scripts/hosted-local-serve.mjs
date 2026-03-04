@@ -1,5 +1,6 @@
 import {spawn} from 'node:child_process';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import fs from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {
@@ -22,7 +23,7 @@ function ensureServiceBuild() {
 }
 
 async function loadServiceModule() {
-  return import(path.resolve(projectRoot, 'packages', 'commerce-troubleshoot-deployer', 'dist', 'index.js'));
+  return import(pathToFileURL(path.resolve(projectRoot, 'packages', 'commerce-troubleshoot-deployer', 'dist', 'index.js')).href);
 }
 
 async function prepareHostedLocal(argv) {

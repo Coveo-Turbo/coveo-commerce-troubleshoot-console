@@ -64,8 +64,8 @@ async function main() {
   await fs.writeFile(path.resolve(templateDir, 'troubleshoot.html'), bodyMarkup, 'utf8');
 
   const assetFiles = await fs.readdir(assetsDir);
-  const jsFiles = assetFiles.filter((file) => file.endsWith('.js'));
-  const cssFiles = assetFiles.filter((file) => file.endsWith('.css'));
+  const jsFiles = assetFiles.filter((file) => file.endsWith('.js')).sort();
+  const cssFiles = assetFiles.filter((file) => file.endsWith('.css')).sort();
 
   if (jsFiles.length === 0) {
     throw new Error('Expected at least one JS asset file in dist/assets.');
