@@ -38,7 +38,7 @@ async function main() {
 
   const outputPath =
     readArg(process.argv.slice(2), 'output') || path.resolve(projectRoot, 'coveo.deploy.json');
-  const bundleRelativeDir = readArg(process.argv.slice(2), 'bundle-dir') || path.join('dist', 'bundle');
+  const bundleRelativeDir = readArg(process.argv.slice(2), 'bundle-dir') || 'dist/bundle';
 
   const {createDeployConfig, writeDeployConfig} = await loadServiceModule();
   const config = createDeployConfig({

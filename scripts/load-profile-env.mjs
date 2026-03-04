@@ -124,9 +124,15 @@ export function resolveDeployRequestFromContext(
     readFromArgOrEnv(argv, 'access-token', 'APP_ACCESS_TOKEN') ||
     readCliConfigValue('accessToken');
 
-  const hostedPageName =
-    readFromArgOrEnv(argv, 'page-name', 'APP_HOSTED_PAGE_NAME') ||
-    'commerce-troubleshoot-console-demo';
+  const resolvedPageName = readFromArgOrEnv(argv, 'page-name', 'APP_HOSTED_PAGE_NAME');
+  if (!resolvedPageName) {
+    console.warn(
+      'No hosted page name provided. Defaulting to "commerce-troubleshoot-console-demo". ' +
+        'Set --page-name or APP_HOSTED_PAGE_NAME to target a specific page.'
+    );
+  }
+
+  const hostedPageName = resolvedPageName || 'commerce-troubleshoot-console-demo';
 
   const region = readFromArgOrEnv(argv, 'region', 'APP_REGION') || readCliConfigValue('region');
   const environment =
