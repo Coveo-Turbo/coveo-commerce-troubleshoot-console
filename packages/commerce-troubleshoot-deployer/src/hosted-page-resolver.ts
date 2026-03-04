@@ -319,7 +319,17 @@ async function lookupHostedPageIdFromProjectsPages(params: {
       const normalizedPages = normalizeHostedPages(response.body);
       pages.push(...normalizedPages);
 
-      if (!hasMorePages(response.body, page, normalizedPages.length)) {
+      const rawItemCount =
+        Array.isArray(response.body)
+          ? response.body.length
+          : typeof response.body === 'object' && response.body !== null
+            ? (Array.isArray((response.body as any).items) && (response.body as any).items.length) ||
+              (Array.isArray((response.body as any).results) && (response.body as any).results.length) ||
+              (Array.isArray((response.body as any).data) && (response.body as any).data.length) ||
+              0
+            : 0;
+
+      if (!hasMorePages(response.body, page, rawItemCount)) {
         const selection = pickExactHostedPageMatch(pages, params.hostedPageName);
         if ((selection.matchedCount ?? 0) > 1 && selection.match?.id) {
           params.logger?.(
