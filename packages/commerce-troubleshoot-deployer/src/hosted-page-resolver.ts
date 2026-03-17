@@ -1,10 +1,15 @@
+import {
+  parsePlatformErrorBody,
+  requestPlatformJson,
+  resolvePlatformBaseUrl,
+  resolveRegionRetryBaseUrl,
+} from './platform-client.js';
+
 type HostedPageLike = {
   id?: string;
   name?: string;
   lastModified?: string;
 };
-
-const DEFAULT_PLATFORM_BASE_URL = 'https://platform.cloud.coveo.com';
 const HOSTED_PAGES_LIST_PER_PAGE = 100;
 const HOSTED_PAGES_LIST_MAX_PAGES = 20;
 
@@ -36,103 +41,12 @@ function extractItems(payload: unknown): unknown[] {
   return [];
 }
 
-function resolvePlatformBaseUrl(region?: string, overrideBaseUrl?: string) {
-  const explicit = toString(overrideBaseUrl);
-  if (explicit) {
-    return explicit.replace(/\/+$/, '');
-  }
-
-  const normalizedRegion = toString(region).toLowerCase();
-  if (!normalizedRegion) {
-    return DEFAULT_PLATFORM_BASE_URL;
-  }
-
-  if (normalizedRegion === 'us' || normalizedRegion.startsWith('us-')) {
-    return DEFAULT_PLATFORM_BASE_URL;
-  }
-
-  if (normalizedRegion === 'eu' || normalizedRegion.startsWith('eu-')) {
-    return 'https://platform-eu.cloud.coveo.com';
-  }
-
-  if (normalizedRegion === 'ca' || normalizedRegion.startsWith('ca-')) {
-    return 'https://platform-ca.cloud.coveo.com';
-  }
-
-  if (
-    normalizedRegion === 'au' ||
-    normalizedRegion.startsWith('au-') ||
-    normalizedRegion.startsWith('ap-') ||
-    normalizedRegion.startsWith('apac')
-  ) {
-    return 'https://platform-au.cloud.coveo.com';
-  }
-
-  return DEFAULT_PLATFORM_BASE_URL;
-}
-
-function parseErrorBody(errorBody: string) {
-  let message = errorBody;
-  let errorCode = '';
-
-  try {
-    const parsed = JSON.parse(errorBody) as Record<string, unknown>;
-    if (typeof parsed.message === 'string') {
-      message = parsed.message;
-    }
-    if (typeof parsed.errorCode === 'string') {
-      errorCode = parsed.errorCode;
-    }
-  } catch {
-    // Keep the raw body text when payload is not JSON.
-  }
-
-  return {
-    message,
-    errorCode,
-  };
-}
-
-function parseAllowedRegionsFromErrorBody(errorBody: string) {
-  const {message} = parseErrorBody(errorBody);
-  const match = message.match(/Allowed region\(s\): '\[([^\]]+)\]'/i);
-  if (!match) {
-    return [];
-  }
-
-  const allowedRegionList = match[1] ?? '';
-  return allowedRegionList
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean);
-}
-
-function resolveRegionRetryBaseUrl(params: {
-  status: number;
-  errorBody: string;
-  currentBaseUrl: string;
-}) {
-  if (params.status !== 400) {
-    return '';
-  }
-
-  const allowedRegions = parseAllowedRegionsFromErrorBody(params.errorBody);
-  for (const allowedRegion of allowedRegions) {
-    const candidateBaseUrl = resolvePlatformBaseUrl(allowedRegion);
-    if (candidateBaseUrl && candidateBaseUrl !== params.currentBaseUrl) {
-      return candidateBaseUrl;
-    }
-  }
-
-  return '';
-}
-
 function isInvalidUriError(status: number, errorBody: string) {
   if (status !== 404) {
     return false;
   }
 
-  const {message, errorCode} = parseErrorBody(errorBody);
+  const {message, errorCode} = parsePlatformErrorBody(errorBody);
   if (errorCode.toUpperCase() === 'INVALID_URI') {
     return true;
   }
@@ -145,7 +59,7 @@ function isPageNameNotFoundError(status: number, errorBody: string) {
     return false;
   }
 
-  const {message} = parseErrorBody(errorBody);
+  const {message} = parsePlatformErrorBody(errorBody);
   return /Page with name ['"].+['"] does not exist/i.test(message);
 }
 
@@ -235,36 +149,6 @@ function hasMorePages(payload: unknown, pageIndex: number, pageSize: number) {
   return pageSize === HOSTED_PAGES_LIST_PER_PAGE;
 }
 
-async function requestPlatform(params: {
-  baseUrl: string;
-  method: string;
-  endpoint: string;
-  accessToken: string;
-}) {
-  const response = await fetch(`${params.baseUrl}${params.endpoint}`, {
-    method: params.method,
-    headers: {
-      Authorization: `Bearer ${params.accessToken}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-  });
-
-  if (response.ok) {
-    return {
-      ok: true as const,
-      status: response.status,
-      body: await response.json(),
-    };
-  }
-
-  return {
-    ok: false as const,
-    status: response.status,
-    bodyText: await response.text(),
-  };
-}
-
 async function lookupHostedPageIdFromProjectsPages(params: {
   organizationId: string;
   hostedPageName: string;
@@ -279,7 +163,7 @@ async function lookupHostedPageIdFromProjectsPages(params: {
 
     for (let page = 0; page < HOSTED_PAGES_LIST_MAX_PAGES; page += 1) {
       const endpoint = `/rest/organizations/${params.organizationId}/hostedpages/projects/pages?order=asc&perPage=${HOSTED_PAGES_LIST_PER_PAGE}&page=${page}`;
-      const response = await requestPlatform({
+      const response = await requestPlatformJson({
         baseUrl: activeBaseUrl,
         method: 'GET',
         endpoint,
@@ -371,7 +255,7 @@ async function lookupHostedPageIdFromSearchPagesName(params: {
   const endpoint = `/rest/organizations/${params.organizationId}/pages?name=${encodeURIComponent(params.hostedPageName)}`;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await requestPlatform({
+    const response = await requestPlatformJson({
       baseUrl: activeBaseUrl,
       method: 'GET',
       endpoint,

@@ -54,7 +54,7 @@ Runs full service preparation and service dry-run packaging into:
 No `ui:deploy` call.
 
 - `npm run deploy:hosted`
-Runs full flow including `coveo ui:deploy`.
+Runs full flow including direct hosted page API create/update.
 
 ## Common Validation Scenarios
 
@@ -122,13 +122,15 @@ Managed token values are cached locally in `.cache/managed-keys.json` so subsequ
 npm run deploy:hosted -- --page-name <page_name>
 ```
 
-When `--page-id` is omitted, the service now resolves an existing hosted page by exact `--page-name` and forwards that ID to `coveo ui:deploy` to perform an update.
-If no exact name match exists, deployment creates a new hosted page.
+When `--page-id` is omitted, the service resolves an existing hosted page by exact `--page-name` and uses the Hosted Page API to perform an update.
+If no exact name match exists, deployment creates a new hosted page through the same API.
 Lookup strategy:
 - Primary endpoint: `GET /rest/organizations/{orgId}/hostedpages/projects/pages?order=asc&perPage=100&page=<n>`
 - Fallback endpoint (if primary is unavailable): `GET /rest/organizations/{orgId}/pages?name=<pageName>`
 - Region host is derived from CLI/env region (`platform` / `platform-eu` / `platform-ca`).
 - `404 Page with name ... does not exist` on fallback is treated as non-fatal (no match), allowing create flow.
+
+The package default no longer requires a local `coveo` binary. CLI-backed deploy is still available by explicitly providing `CoveoCliDeployExecutor`.
 
 Optional managed-key rotation:
 

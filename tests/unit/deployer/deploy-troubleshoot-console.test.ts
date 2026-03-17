@@ -7,6 +7,15 @@ import {
   resolveRuntimeConfigForRequest,
 } from '../../../packages/commerce-troubleshoot-deployer/src/deploy-troubleshoot-console';
 
+function createJsonResponse(status: number, payload: unknown) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+}
+
 async function createTemplateDir() {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'ctc-template-'));
   await fs.mkdir(path.join(dir, 'js'), {recursive: true});
@@ -115,6 +124,64 @@ describe('deploy-troubleshoot-console', () => {
     expect(result.hostedPageId).toBe('123e4567-e89b-12d3-a456-426614174000');
     expect(deploy).toHaveBeenCalledWith(result.deployConfigPath, outputRootDir, {});
     expect(hostedPageIdResolver).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the API-backed deploy executor by default for non dry-run deployments', async () => {
+    const templateDir = await createTemplateDir();
+    const outputRootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'ctc-output-'));
+    const hostedPageIdResolver = vi.fn(async () => undefined);
+    const fetchMock = vi.fn(async () =>
+      createJsonResponse(200, {
+        id: '123e4567-e89b-12d3-a456-426614174099',
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    try {
+      const result = await deployTroubleshootConsole(
+        {
+          target: {
+            organizationId: 'my-org',
+            hostedPageName: 'my-page',
+          },
+          auth: {
+            accessToken: 'platform-token',
+          },
+          keyStrategy: {
+            mode: 'provided',
+            engineAccessToken: 'engine-token',
+            cmhAccessToken: 'cmh-token',
+          },
+          artifact: {
+            templateDir,
+          },
+          deploy: {
+            dryRun: false,
+            outputRootDir,
+          },
+        },
+        {
+          hostedPageIdResolver,
+        }
+      );
+
+      expect(result.deployed).toBe(true);
+      expect(result.hostedPageId).toBe('123e4567-e89b-12d3-a456-426614174099');
+      expect(hostedPageIdResolver).toHaveBeenCalledTimes(1);
+
+      const [url, request] = fetchMock.mock.calls[0] as [string, RequestInit];
+      expect(url).toBe('https://platform.cloud.coveo.com/rest/organizations/my-org/hostedpages');
+      expect(request.method).toBe('POST');
+
+      const payload = JSON.parse(String(request.body));
+      expect(payload).toMatchObject({
+        name: 'my-page',
+        html: '<div data-template="troubleshoot"></div>\n',
+      });
+      expect(payload.javascript[0].inlineContent).toContain('window.__APP_CONFIG');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('forwards hostedPageId to deploy executor when provided', async () => {

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createDeployConfig, writeDeployConfig} from './deploy-config.js';
-import {CoveoCliDeployExecutor} from './deploy-executor.js';
+import {HostedPageApiDeployExecutor} from './deploy-executor.js';
 import {resolveHostedPageIdByName} from './hosted-page-resolver.js';
 import {resolveAccessTokens} from './key-manager.js';
 import {buildRuntimeConfigPayload, serializeWindowRuntimeConfig} from './runtime-config.js';
@@ -174,7 +174,14 @@ export async function deployTroubleshootConsole(
       }
     }
 
-    const executor = options.deployExecutor ?? new CoveoCliDeployExecutor();
+    const executor =
+      options.deployExecutor ??
+      new HostedPageApiDeployExecutor({
+        organizationId: normalized.target.organizationId,
+        accessToken: normalized.auth.accessToken,
+        ...(normalized.target.region ? {region: normalized.target.region} : {}),
+        ...(logger ? {logger} : {}),
+      });
     const execution = await executor.deploy(deployLayout.deployConfigPath, deployLayout.workspaceRoot, {
       ...(hostedPageId ? {pageId: hostedPageId} : {}),
     });
