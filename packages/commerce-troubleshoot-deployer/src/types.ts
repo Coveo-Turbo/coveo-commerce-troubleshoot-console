@@ -97,6 +97,14 @@ export interface DeployExecutor {
   deploy(configPath: string, cwd?: string, options?: DeployExecutionOptions): Promise<DeployResult>;
 }
 
+export type HostedPageApiDeployExecutorOptions = {
+  organizationId: string;
+  accessToken: string;
+  region?: string;
+  baseUrl?: string;
+  logger?: (message: string) => void;
+};
+
 export type HostedPageLookupInput = {
   organizationId: string;
   accessToken: string;
