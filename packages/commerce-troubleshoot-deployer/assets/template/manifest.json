@@ -1,13 +1,13 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.2",
   "files": {
     "troubleshoot.html": {
       "sha256": "4b92870d61688cfcdfe00e29969a262162c7853aca48a9801de9c55c0a68d4d0",
       "bytes": 41
     },
     "js/app.js": {
-      "sha256": "3621c459403cb893ef40b8c2130d6246d91eb3efd4354f91690671f79b6cab1d",
-      "bytes": 422735
+      "sha256": "289f04da2b1d865f39bcca19f2a4e0145fc91625c26b586f5675a94d00b79951",
+      "bytes": 602226
     },
     "styles/main.css": {
       "sha256": "b82b6a252201d7973760941d70837a2c8d4c90f35c668256392f774b3e433b70",
