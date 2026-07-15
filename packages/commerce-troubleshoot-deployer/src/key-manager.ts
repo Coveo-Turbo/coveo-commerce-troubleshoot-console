@@ -70,6 +70,18 @@ const CMH_KEY_PREFIX = 'ctc-cmh-';
 const ENGINE_TEMPLATE_ID = 'AnonymousSearch';
 const DEFAULT_PLATFORM_BASE_URL = 'https://platform.cloud.coveo.com';
 
+function containsPhrase(text: string, phrase: string) {
+  return ` ${text} `.includes(` ${phrase} `);
+}
+
+function containsAnyPhrase(text: string, phrases: readonly string[]) {
+  return phrases.some((phrase) => containsPhrase(text, phrase));
+}
+
+function hasReadScope(text: string) {
+  return containsAnyPhrase(text, ['VIEW', 'READ', 'VIEW_ALL', 'READ_ALL', 'VIEWALL', 'READALL']);
+}
+
 function hasAllScope(text: string) {
   return (
     text.includes(' ALL ') ||
@@ -80,42 +92,57 @@ function hasAllScope(text: string) {
   );
 }
 
-const CMH_REQUIRED_PRIVILEGES = [
+function isCatalogViewPrivilege(text: string) {
+  return containsPhrase(text, 'CATALOG') && hasReadScope(text);
+}
+
+function isMerchandisingHubPrivilege(text: string) {
+  return containsAnyPhrase(text, ['MERCHANDISING_HUB', 'MERCHANDISING HUB']) && hasReadScope(text);
+}
+
+function isMerchandisingHubAllPrivilege(text: string) {
+  return (
+    isMerchandisingHubPrivilege(text) &&
+    (containsAnyPhrase(text, ['VIEW_ALL', 'READ_ALL', 'VIEWALL', 'READALL']) ||
+      hasAllScope(` ${text} `))
+  );
+}
+
+function isLegacyProductListingViewPrivilege(text: string) {
+  return containsAnyPhrase(text, ['PRODUCT_LISTING', 'PRODUCT LISTING']) && hasReadScope(text);
+}
+
+const CMH_REQUIRED_PRIVILEGE_FAMILIES = [
   {
     id: 'CATALOG_VIEW',
     label: 'Catalog - View',
-    match(text: string) {
-      return text.includes('CATALOG') && (text.includes('VIEW') || text.includes('READ'));
+    select(privileges: PrivilegeLike[]) {
+      return privileges.filter((privilege) => isCatalogViewPrivilege(normalize(privilege)));
     },
   },
   {
-    id: 'MERCHANDISING_HUB_VIEW_ALL',
-    label: 'Merchandising Hub - View all',
-    match(text: string) {
-      return (
-        text.includes('MERCHANDISING_HUB') &&
-        (text.includes('VIEW_ALL') ||
-          text.includes('VIEW ALL') ||
-          text.includes('VIEWALL') ||
-          ((text.includes('VIEW') || text.includes('READ')) && hasAllScope(` ${text} `)))
+    id: 'MERCHANDISING_HUB_VIEW',
+    label: 'Merchandising Hub - View',
+    select(privileges: PrivilegeLike[]) {
+      const allScoped = privileges.filter((privilege) =>
+        isMerchandisingHubAllPrivilege(normalize(privilege))
       );
+      if (allScoped.length > 0) {
+        return allScoped;
+      }
+
+      return privileges.filter((privilege) => isMerchandisingHubPrivilege(normalize(privilege)));
     },
   },
+] as const;
+
+const CMH_OPTIONAL_PRIVILEGE_FAMILIES = [
   {
     id: 'PRODUCT_LISTING_VIEW',
-    label: 'Product listing - View',
-    match(text: string) {
-      return (
-        (text.includes('PRODUCT_LISTING') || text.includes('PRODUCT LISTING')) &&
-        (text.includes('VIEW') || text.includes('READ'))
+    select(privileges: PrivilegeLike[]) {
+      return privileges.filter((privilege) =>
+        isLegacyProductListingViewPrivilege(normalize(privilege))
       );
-    },
-  },
-  {
-    id: 'ORGANIZATION_VIEW',
-    label: 'Organization - View',
-    match(text: string) {
-      return text.includes('ORGANIZATION') && (text.includes('VIEW') || text.includes('READ'));
     },
   },
 ] as const;
@@ -713,19 +740,22 @@ function summarizePrivileges(privileges: PrivilegeLike[]) {
 
   for (const privilege of privileges) {
     const text = normalize(privilege);
-    if (text.includes('MERCHANDISING_HUB') || text.includes('MERCHANDISING HUB')) {
+    if (containsAnyPhrase(text, ['MERCHANDISING_HUB', 'MERCHANDISING HUB'])) {
       families.add('MERCHANDISING_HUB');
     }
     if (text.includes('EXECUTE_QUERY') || text.includes('EXECUTE QUERY')) {
       families.add('EXECUTE_QUERY');
     }
-    if (text.includes('CATALOG')) {
+    if (containsAnyPhrase(text, ['CATALOG_SETUP', 'CATALOG SETUP'])) {
+      families.add('CATALOG_SETUP');
+    }
+    if (containsPhrase(text, 'CATALOG')) {
       families.add('CATALOG');
     }
-    if (text.includes('PRODUCT_LISTING') || text.includes('PRODUCT LISTING')) {
+    if (containsAnyPhrase(text, ['PRODUCT_LISTING', 'PRODUCT LISTING'])) {
       families.add('PRODUCT_LISTING');
     }
-    if (text.includes('ORGANIZATION')) {
+    if (containsPhrase(text, 'ORGANIZATION')) {
       families.add('ORGANIZATION');
     }
   }
@@ -754,17 +784,18 @@ function resolveRequiredCmhPrivileges(availablePrivileges: PrivilegeLike[]) {
   const selected: PrivilegeLike[] = [];
   const missing: string[] = [];
 
-  for (const requirement of CMH_REQUIRED_PRIVILEGES) {
-    const matched = availablePrivileges.find((privilege) =>
-      requirement.match(normalize(privilege))
-    );
-
-    if (!matched) {
+  for (const requirement of CMH_REQUIRED_PRIVILEGE_FAMILIES) {
+    const matched = requirement.select(availablePrivileges);
+    if (matched.length === 0) {
       missing.push(requirement.label);
       continue;
     }
 
-    selected.push(matched);
+    selected.push(...matched);
+  }
+
+  for (const requirement of CMH_OPTIONAL_PRIVILEGE_FAMILIES) {
+    selected.push(...requirement.select(availablePrivileges));
   }
 
   return {

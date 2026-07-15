@@ -281,7 +281,7 @@ describe('key-manager', () => {
     expect(result.keyInfo.created).toBe(true);
     expect(client.apiKey.create).toHaveBeenCalledTimes(2);
     const cmhCall = client.apiKey.create.mock.calls[1];
-    expect(cmhCall?.[0]?.privileges).toHaveLength(4);
+    expect(cmhCall?.[0]?.privileges).toHaveLength(3);
   });
 
   it('supports template endpoint 404 by trying direct template create', async () => {
@@ -377,6 +377,88 @@ describe('key-manager', () => {
     expect(result.engineAccessToken).toBe('ctc-engine-my-org-token');
     expect(result.cmhAccessToken).toBe('ctc-cmh-my-org-token');
     expect(client.apiKey.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('creates a CMH key from the current commerce privilege model without PRODUCT_LISTING', async () => {
+    const catalogPrivilege = {
+      owner: 'CATALOG',
+      targetDomain: 'CATALOG',
+      level: 'VIEW',
+    };
+    const merchPrivilegeA = {
+      owner: 'MERCHANDISING_HUB',
+      targetDomain: 'MERCHANDISING_HUB',
+      targetId: 'property-a',
+      level: 'VIEW',
+    };
+    const merchPrivilegeB = {
+      owner: 'MERCHANDISING_HUB',
+      targetDomain: 'MERCHANDISING_HUB',
+      targetId: 'property-b',
+      level: 'VIEW',
+    };
+    const client = createClientMock({
+      apiKeyTemplate: {
+        listAPIKeysEligibility: vi.fn(async () => [{id: 'AnonymousSearch', canGenerate: true}]),
+      },
+      organization: {
+        listApiKeysPrivileges: vi.fn(async () => [
+          catalogPrivilege,
+          merchPrivilegeA,
+          merchPrivilegeB,
+        ]),
+      },
+    });
+
+    const result = await resolveAccessTokens({
+      organizationId: 'my-org',
+      accessToken: 'platform-token',
+      keyStrategy: {
+        mode: 'managed',
+      },
+      clientFactory: vi.fn(() => client),
+    });
+
+    expect(result.cmhAccessToken).toBe('ctc-cmh-my-org-token');
+    const cmhCall = client.apiKey.create.mock.calls[1];
+    expect(cmhCall?.[0]?.privileges).toEqual(
+      expect.arrayContaining([catalogPrivilege, merchPrivilegeA, merchPrivilegeB])
+    );
+    expect(cmhCall?.[0]?.privileges).toHaveLength(3);
+  });
+
+  it('does not treat Catalog Setup as Catalog view when building a CMH key', async () => {
+    const client = createClientMock({
+      apiKeyTemplate: {
+        listAPIKeysEligibility: vi.fn(async () => [{id: 'AnonymousSearch', canGenerate: true}]),
+      },
+      organization: {
+        listApiKeysPrivileges: vi.fn(async () => [
+          {
+            owner: 'CATALOG_SETUP',
+            targetDomain: 'CATALOG_SETUP',
+            level: 'VIEW',
+          },
+          {
+            owner: 'MERCHANDISING_HUB',
+            targetDomain: 'MERCHANDISING_HUB',
+            targetId: 'ALL',
+            level: 'VIEW',
+          },
+        ]),
+      },
+    });
+
+    await expect(
+      resolveAccessTokens({
+        organizationId: 'my-org',
+        accessToken: 'platform-token',
+        keyStrategy: {
+          mode: 'managed',
+        },
+        clientFactory: vi.fn(() => client),
+      })
+    ).rejects.toThrow('Catalog - View');
   });
 
   it('retries REST fallback in allowed region when organization is in EU', async () => {
