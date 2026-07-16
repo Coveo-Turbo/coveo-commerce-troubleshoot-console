@@ -1,5 +1,6 @@
 import { ConfigDomainError, type AppRuntimeConfig } from '../types/app-config';
 import type { ProductTemplatePreset, TroubleshootState } from '../types/troubleshoot';
+import '../components/demo-product-color-swatches';
 import { loadRuntimeConfig } from '../services/config-loader';
 import { createTroubleshootStateStore, createDefaultPreset } from '../state/troubleshoot-state';
 import { CmhConfigService } from '../services/cmh-config-service';
@@ -11,6 +12,8 @@ import atomicExample1ProductListTemplate from '../product-templates/atomic-examp
 import atomicExample1InstantProductsTemplate from '../product-templates/atomic-example-1/instant-products.html?raw';
 import atomicExample2ProductListTemplate from '../product-templates/atomic-example-2/product-list.html?raw';
 import atomicExample2InstantProductsTemplate from '../product-templates/atomic-example-2/instant-products.html?raw';
+import atomicColorSwatchDemoProductListTemplate from '../product-templates/atomic-color-swatch-demo/product-list.html?raw';
+import atomicColorSwatchDemoInstantProductsTemplate from '../product-templates/atomic-color-swatch-demo/instant-products.html?raw';
 
 const POLL_INTERVAL_MS = 120;
 const WAIT_TIMEOUT_MS = 10_000;
@@ -140,7 +143,16 @@ function createDefaultProductTemplatePresets(): ProductTemplatePreset[] {
     },
   };
 
-  return [defaultPreset, example1Preset, example2Preset];
+  const colorSwatchDemoPreset: ProductTemplatePreset = {
+    id: 'atomic-color-swatch-demo',
+    label: 'Color Swatch Demo',
+    productTemplates: {
+      productList: normalizeTemplateSource(atomicColorSwatchDemoProductListTemplate),
+      instantProducts: normalizeTemplateSource(atomicColorSwatchDemoInstantProductsTemplate),
+    },
+  };
+
+  return [defaultPreset, example1Preset, example2Preset, colorSwatchDemoPreset];
 }
 
 function escapeHtml(value: string): string {
