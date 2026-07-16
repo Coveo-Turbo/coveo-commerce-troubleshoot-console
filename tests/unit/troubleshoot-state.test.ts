@@ -150,7 +150,7 @@ describe('troubleshoot-state', () => {
     (globalThis as {window?: unknown}).window = originalWindow;
   });
 
-  it('merges repo product template presets while keeping localStorage overrides', () => {
+  it('merges repo product template presets while keeping local-only persisted presets', () => {
     const storage = createMemoryStorage();
     const storageKey = 'merge-product-template-presets';
 
@@ -204,8 +204,62 @@ describe('troubleshoot-state', () => {
     const snapshot = store.getSnapshot();
     const defaultPreset = snapshot.productTemplatePresets.find((preset) => preset.id === 'default');
 
-    expect(defaultPreset?.productTemplates.productList).toContain('Local Default Product');
+    expect(defaultPreset?.productTemplates.productList).toBe('');
     expect(snapshot.productTemplatePresets.some((preset) => preset.id === 'atomic-custom-1')).toBe(true);
     expect(snapshot.productTemplatePresets.some((preset) => preset.id === 'local-only')).toBe(true);
+  });
+
+  it('refreshes persisted selected template HTML when a repo preset changed', () => {
+    const storage = createMemoryStorage();
+    const storageKey = 'refresh-selected-template-html';
+
+    storage.setItem(
+      storageKey,
+      JSON.stringify({
+        version: 1,
+        state: {
+          selectedProductTemplatePresetId: 'atomic-color-swatch-demo',
+          productTemplates: {
+            productList: '<div>Old Repo Product Template</div>',
+            instantProducts: '<div>Old Repo Instant Template</div>',
+          },
+        },
+        presets: [createDefaultPreset()],
+        productTemplatePresets: [
+          {
+            id: 'atomic-color-swatch-demo',
+            label: 'Color Swatch Demo',
+            productTemplates: {
+              productList: '<div>Old Repo Product Template</div>',
+              instantProducts: '<div>Old Repo Instant Template</div>',
+            },
+          },
+        ],
+      })
+    );
+
+    const store = createTroubleshootStateStore({
+      defaults,
+      storage,
+      storageKey,
+      defaultPresets: [createDefaultPreset()],
+      defaultProductTemplatePresets: [
+        createDefaultProductTemplatePreset(),
+        {
+          id: 'atomic-color-swatch-demo',
+          label: 'Color Swatch Demo',
+          productTemplates: {
+            productList: '<div>New Repo Product Template</div>',
+            instantProducts: '<div>New Repo Instant Template</div>',
+          },
+        },
+      ],
+    });
+
+    const snapshot = store.getSnapshot();
+
+    expect(snapshot.state.selectedProductTemplatePresetId).toBe('atomic-color-swatch-demo');
+    expect(snapshot.state.productTemplates.productList).toContain('New Repo Product Template');
+    expect(snapshot.state.productTemplates.instantProducts).toContain('New Repo Instant Template');
   });
 });

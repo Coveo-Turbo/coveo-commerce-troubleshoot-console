@@ -23,7 +23,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@coveo/headless": "^3.36.0",
+    "@coveo/headless": "^3.53.1",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {

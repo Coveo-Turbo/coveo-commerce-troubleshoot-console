@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const ATOMIC_SCRIPT_URL = 'https://static.cloud.coveo.com/atomic/v3/atomic.esm.js';
-const ATOMIC_THEME_URL = 'https://static.cloud.coveo.com/atomic/v3/themes/coveo.css';
+const ATOMIC_SCRIPT_URL = 'https://static.cloud.coveo.com/atomic/v3.60.0/atomic.esm.js';
+const ATOMIC_THEME_URL = 'https://static.cloud.coveo.com/atomic/v3.60.0/themes/coveo.css';
 const GOOGLE_FONTS_URL =
   'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap';
 

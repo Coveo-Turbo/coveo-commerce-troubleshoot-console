@@ -9,6 +9,10 @@
     <atomic-product-field-condition if-defined="ec_thumbnails">
       <atomic-product-image field="ec_thumbnails"></atomic-product-image>
     </atomic-product-field-condition>
+    <demo-product-size-selector
+      field="ec_size"
+      swatch-field="swatch_hex"
+    ></demo-product-size-selector>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="ec_brand">
@@ -31,6 +35,8 @@
     <atomic-product-price currency="USD"></atomic-product-price>
   </atomic-product-section-emphasized>
   <atomic-product-section-children>
-    <demo-product-color-swatches field="swatch_hex"></demo-product-color-swatches>
+    <demo-product-color-swatches
+      field="swatch_hex"
+    ></demo-product-color-swatches>
   </atomic-product-section-children>
 </template>

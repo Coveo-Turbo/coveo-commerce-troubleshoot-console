@@ -309,19 +309,74 @@ function normalizeProductTemplatePresets(input: unknown): ProductTemplatePreset[
   return ensureDefaultProductTemplatePreset(dedupeProductTemplatePresets(normalized));
 }
 
-function mergeProductTemplatePresetsWithLocalPriority(
+function mergeProductTemplatePresetsWithRepoPriority(
   defaults: ProductTemplatePreset[],
   persisted: ProductTemplatePreset[]
 ): ProductTemplatePreset[] {
   const merged = new Map<string, ProductTemplatePreset>();
-  for (const preset of defaults) {
+  for (const preset of persisted) {
     merged.set(preset.id, cloneProductTemplatePreset(preset));
   }
-  for (const preset of persisted) {
+  for (const preset of defaults) {
     merged.set(preset.id, cloneProductTemplatePreset(preset));
   }
 
   return ensureDefaultProductTemplatePreset([...merged.values()]);
+}
+
+function findProductTemplatePresetById(
+  presets: ProductTemplatePreset[],
+  id: string
+): ProductTemplatePreset | null {
+  return presets.find((preset) => preset.id === id) ?? null;
+}
+
+function migrateSelectedProductTemplatesFromPreset(
+  input: unknown,
+  persistedProductTemplatePresets: ProductTemplatePreset[],
+  productTemplatePresets: ProductTemplatePreset[]
+): unknown {
+  if (!isRecord(input)) {
+    return input;
+  }
+
+  const selectedProductTemplatePresetId = toString(input.selectedProductTemplatePresetId);
+  if (!selectedProductTemplatePresetId) {
+    return input;
+  }
+
+  const persistedPreset = findProductTemplatePresetById(
+    persistedProductTemplatePresets,
+    selectedProductTemplatePresetId
+  );
+  const resolvedPreset = findProductTemplatePresetById(
+    productTemplatePresets,
+    selectedProductTemplatePresetId
+  );
+
+  if (!persistedPreset || !resolvedPreset) {
+    return input;
+  }
+
+  const persistedStateTemplates = normalizeProductTemplates(
+    input.productTemplates,
+    persistedPreset.productTemplates
+  );
+  const stateMatchesPersistedPreset =
+    persistedStateTemplates.productList === persistedPreset.productTemplates.productList &&
+    persistedStateTemplates.instantProducts === persistedPreset.productTemplates.instantProducts;
+  const presetChangedInRepo =
+    persistedPreset.productTemplates.productList !== resolvedPreset.productTemplates.productList ||
+    persistedPreset.productTemplates.instantProducts !== resolvedPreset.productTemplates.instantProducts;
+
+  if (!stateMatchesPersistedPreset || !presetChangedInRepo) {
+    return input;
+  }
+
+  return {
+    ...input,
+    productTemplates: cloneProductTemplates(resolvedPreset.productTemplates),
+  };
 }
 
 export function normalizeTroubleshootState(
@@ -412,13 +467,20 @@ export function createTroubleshootStateStore(options: StoreOptions) {
     ? normalizeProductTemplatePresets(parsed?.productTemplatePresets)
     : [];
   const productTemplatePresets = hasPersistedProductTemplatePresets
-    ? mergeProductTemplatePresetsWithLocalPriority(
+    ? mergeProductTemplatePresetsWithRepoPriority(
         defaultProductTemplatePresets,
         persistedProductTemplatePresets
       )
     : defaultProductTemplatePresets.map((preset) => cloneProductTemplatePreset(preset));
+  const initialState = hasPersistedProductTemplatePresets
+    ? migrateSelectedProductTemplatesFromPreset(
+        parsed?.state,
+        persistedProductTemplatePresets,
+        productTemplatePresets
+      )
+    : parsed?.state;
   let snapshot: StoreSnapshot = {
-    state: normalizeTroubleshootState(parsed?.state, options.defaults, presets, productTemplatePresets),
+    state: normalizeTroubleshootState(initialState, options.defaults, presets, productTemplatePresets),
     presets,
     productTemplatePresets,
   };

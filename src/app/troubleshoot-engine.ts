@@ -18,8 +18,8 @@ type TroubleshootEngineParams = {
 
 const ATOMIC_SCRIPT_ID = 'coveo-atomic-commerce-esm';
 const ATOMIC_THEME_ID = 'coveo-atomic-theme-css';
-const ATOMIC_SCRIPT_URL = 'https://static.cloud.coveo.com/atomic/v3/atomic.esm.js';
-const ATOMIC_THEME_URL = 'https://static.cloud.coveo.com/atomic/v3/themes/coveo.css';
+const ATOMIC_SCRIPT_URL = 'https://static.cloud.coveo.com/atomic/v3.60.0/atomic.esm.js';
+const ATOMIC_THEME_URL = 'https://static.cloud.coveo.com/atomic/v3.60.0/themes/coveo.css';
 const ATOMIC_LOAD_TIMEOUT_MS = 30_000;
 
 let atomicLoadPromise: Promise<void> | null = null;

@@ -81,7 +81,7 @@ describe('deploy-executor', () => {
         },
         {
           isModule: true,
-          url: 'https://static.cloud.coveo.com/atomic/v3/atomic.esm.js',
+          url: 'https://static.cloud.coveo.com/atomic/v3.60.0/atomic.esm.js',
         },
       ]);
       expect(payload.css).toEqual([
@@ -89,7 +89,7 @@ describe('deploy-executor', () => {
           inlineContent: '.root { color: red; }\n',
         },
         {
-          url: 'https://static.cloud.coveo.com/atomic/v3/themes/coveo.css',
+          url: 'https://static.cloud.coveo.com/atomic/v3.60.0/themes/coveo.css',
         },
         {
           url: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap',
