@@ -2,6 +2,7 @@ node_modules/
 dist/
 coverage/
 .playwright/
+.playwright-cli/
 playwright-report/
 test-results/
 hosted-local/generated-config.js
