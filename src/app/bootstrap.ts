@@ -1,7 +1,5 @@
 import { ConfigDomainError, type AppRuntimeConfig } from '../types/app-config';
 import type { ProductTemplatePreset, TroubleshootState } from '../types/troubleshoot';
-import '../components/demo-product-color-swatches';
-import '../components/demo-product-size-selector';
 import { loadRuntimeConfig } from '../services/config-loader';
 import { createTroubleshootStateStore, createDefaultPreset } from '../state/troubleshoot-state';
 import { CmhConfigService } from '../services/cmh-config-service';

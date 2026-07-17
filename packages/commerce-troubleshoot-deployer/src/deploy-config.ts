@@ -32,6 +32,7 @@ export type CoveoDeployConfig = {
 export function createDeployConfig(options: {
   hostedPageName: string;
   bundleRelativeDir: string;
+  customComponentsUrl?: string;
 }): CoveoDeployConfig {
   return {
     name: options.hostedPageName,
@@ -54,6 +55,9 @@ export function createDeployConfig(options: {
         path: ATOMIC_SCRIPT_URL,
         isModule: true,
       },
+      ...(options.customComponentsUrl
+        ? [{path: options.customComponentsUrl, isModule: true}]
+        : []),
     ],
     cssEntryFiles: [
       {

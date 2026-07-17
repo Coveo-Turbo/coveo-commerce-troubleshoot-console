@@ -37,6 +37,7 @@ function normalizeRequest(request: DeployTroubleshootRequest): DeployTroubleshoo
   const outputRootDir = toString(request.deploy?.outputRootDir);
   const bundleRelativeDir = toString(request.deploy?.bundleRelativeDir);
   const deployConfigRelativePath = toString(request.deploy?.deployConfigRelativePath);
+  const customComponentsUrl = toString(request.deploy?.customComponentsUrl);
 
   const normalized: DeployTroubleshootRequest = {
     target: {
@@ -66,6 +67,7 @@ function normalizeRequest(request: DeployTroubleshootRequest): DeployTroubleshoo
       ...(outputRootDir ? {outputRootDir} : {}),
       ...(bundleRelativeDir ? {bundleRelativeDir} : {}),
       ...(deployConfigRelativePath ? {deployConfigRelativePath} : {}),
+      ...(customComponentsUrl ? {customComponentsUrl} : {}),
     },
   };
 
@@ -140,6 +142,9 @@ export async function deployTroubleshootConsole(
   const deployConfig = createDeployConfig({
     hostedPageName: normalized.target.hostedPageName,
     bundleRelativeDir: deployLayout.bundleRelativeDir,
+    ...(normalized.deploy?.customComponentsUrl
+      ? {customComponentsUrl: normalized.deploy.customComponentsUrl}
+      : {}),
   });
 
   await writeDeployConfig(deployLayout.deployConfigPath, deployConfig);

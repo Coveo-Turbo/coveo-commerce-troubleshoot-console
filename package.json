@@ -11,6 +11,7 @@
     "build": "vite build",
     "build:service": "npm run build --workspace @coveops/commerce-troubleshoot-deployer",
     "build:service:artifact": "node ./scripts/build-service-artifact.mjs",
+    "build:components:cdn": "node ./scripts/build-components-cdn.mjs",
     "build:service:prepare": "npm run build:service:artifact && npm run build:service",
     "build:hosted": "node ./scripts/build-hosted.mjs",
     "deploy:hosted": "node ./scripts/deploy-hosted.mjs",

@@ -42,6 +42,7 @@ export type DeployOptions = {
   outputRootDir?: string;
   bundleRelativeDir?: string;
   deployConfigRelativePath?: string;
+  customComponentsUrl?: string;
 };
 
 export type DeployTroubleshootRequest = {

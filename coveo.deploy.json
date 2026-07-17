@@ -1,5 +1,5 @@
 {
-  "name": "commerce-troubleshoot-console-demo",
+  "name": "jfallaire-commerce-color-swatch-demo",
   "dir": "dist/bundle",
   "htmlEntryFile": {
     "path": "troubleshoot.html"
@@ -17,6 +17,10 @@
   "javascriptUrls": [
     {
       "path": "https://static.cloud.coveo.com/atomic/v3.60.0/atomic.esm.js",
+      "isModule": true
+    },
+    {
+      "path": "https://cdn.jsdelivr.net/gh/Coveo-Turbo/coveo-commerce-troubleshoot-console@c193a2d/cdn/demo-product-components.js",
       "isModule": true
     }
   ],

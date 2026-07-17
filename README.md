@@ -171,9 +171,24 @@ Supported args/env:
 - `--country` / `APP_DEFAULT_COUNTRY`
 - `--currency` / `APP_DEFAULT_CURRENCY`
 - `--view-url` / `APP_DEFAULT_VIEW_URL`
+- `--custom-components-url` / `APP_CUSTOM_COMPONENTS_URL` (optional external ES module URL for custom components)
 - `--rotate` (managed strategy only)
 
 If engine/cmh tokens are not provided, the service uses managed-key mode.
+
+## Publishing Custom Components
+
+Build the external component bundle with:
+
+```bash
+npm run build:components:cdn
+```
+
+Commit `cdn/demo-product-components.js` to a public branch or release commit, then point `APP_CUSTOM_COMPONENTS_URL` to its commit-pinned jsDelivr URL. For example:
+
+```bash
+APP_CUSTOM_COMPONENTS_URL=https://cdn.jsdelivr.net/gh/Coveo-Turbo/coveo-commerce-troubleshoot-console@<commit>/cdn/demo-product-components.js
+```
 
 `--tracking-id` only sets runtime defaults for the hosted app payload. It does not change hosted page identity (`--page-name`) and does not alter key strategy selection.
 
