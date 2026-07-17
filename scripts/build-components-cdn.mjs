@@ -8,6 +8,9 @@ const projectRoot = path.resolve(path.dirname(__filename), '..');
 await build({
   configFile: false,
   root: projectRoot,
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+  },
   build: {
     lib: {
       entry: path.resolve(projectRoot, 'src/components/demo-product-components-entry.ts'),
