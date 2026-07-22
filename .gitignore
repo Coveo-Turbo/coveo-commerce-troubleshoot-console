@@ -10,3 +10,4 @@ hosted-local/generated-config.js
 *.local
 packages/commerce-troubleshoot-deployer/dist/
 .cache/
+coveo.deploy.json
