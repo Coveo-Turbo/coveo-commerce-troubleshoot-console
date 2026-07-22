@@ -243,43 +243,84 @@ export function resolveInteractiveProduct(element: HTMLElement): InteractiveProd
 
 /**
  * Binds Coveo product-click analytics to an anchor, mirroring Atomic's `bindAnalyticsToLink`:
- * `click`/`contextmenu`/`mousedown`/`mouseup` trigger `select()`, `touchstart` begins a delayed
- * select, and `touchend` cancels it. Propagation is stopped so the host card does not double-handle
- * the interaction. Returns a cleanup function.
+ * `click`/`contextmenu`/`mousedown`/`mouseup` trigger the provided `onSelect`. Propagation is
+ * stopped so the host card does not double-handle the interaction. Returns a cleanup function.
  */
 export function bindProductClickAnalytics(
   anchor: HTMLAnchorElement,
-  interactiveProduct: InteractiveProduct | null,
+  onSelect: () => void,
   options: {stopPropagation?: boolean} = {}
 ): () => void {
   const stopPropagation = options.stopPropagation !== false;
 
-  const run = (event: Event, action?: () => void) => {
+  const handler = (event: Event) => {
     if (stopPropagation) {
       event.stopPropagation();
     }
-    action?.();
+    onSelect();
   };
-
-  const onSelect = (event: Event) => run(event, interactiveProduct ? () => interactiveProduct.select() : undefined);
-  const onBeginDelayedSelect = (event: Event) =>
-    run(event, interactiveProduct ? () => interactiveProduct.beginDelayedSelect() : undefined);
-  const onCancelPendingSelect = (event: Event) =>
-    run(event, interactiveProduct ? () => interactiveProduct.cancelPendingSelect() : undefined);
 
   const selectEvents = ['click', 'contextmenu', 'mousedown', 'mouseup'] as const;
   for (const name of selectEvents) {
-    anchor.addEventListener(name, onSelect);
+    anchor.addEventListener(name, handler);
   }
-  anchor.addEventListener('touchstart', onBeginDelayedSelect, {passive: true});
-  anchor.addEventListener('touchend', onCancelPendingSelect, {passive: true});
 
   return () => {
     for (const name of selectEvents) {
-      anchor.removeEventListener(name, onSelect);
+      anchor.removeEventListener(name, handler);
     }
-    anchor.removeEventListener('touchstart', onBeginDelayedSelect);
-    anchor.removeEventListener('touchend', onCancelPendingSelect);
+  };
+}
+
+/**
+ * Coveo `ec.productClick` reads its payload (name, price, productId, permanentid) live from the
+ * product object the Atomic `InteractiveProduct` controller wraps — which is the same object shared
+ * by reference with these components. Because the app and Atomic bundle separate Headless copies, we
+ * cannot rebuild a controller for the sibling; instead we temporarily patch the shared product's
+ * analytics fields to the selected sibling/variant, log the click, then restore them synchronously.
+ */
+export function logSiblingProductClick(
+  interactiveProduct: InteractiveProduct | null,
+  product: Product | null,
+  sibling: StyleGroupSibling | null,
+  variant?: StyleGroupSiblingVariant
+): void {
+  if (!interactiveProduct || !product || !sibling) {
+    interactiveProduct?.select();
+    return;
+  }
+
+  const overrides = buildSiblingClickOverrides(sibling, variant);
+  const target = product as unknown as Record<string, unknown>;
+  const snapshot: Record<string, unknown> = {};
+  for (const key of Object.keys(overrides)) {
+    snapshot[key] = target[key];
+  }
+
+  Object.assign(target, overrides);
+  try {
+    interactiveProduct.select();
+  } finally {
+    Object.assign(target, snapshot);
+  }
+}
+
+function buildSiblingClickOverrides(
+  sibling: StyleGroupSibling,
+  variant?: StyleGroupSiblingVariant
+): Record<string, unknown> {
+  const variantPrices = sibling.variants
+    .map((candidate) => candidate.price)
+    .filter((price): price is number => typeof price === 'number');
+  const price = variant?.price ?? (variantPrices.length > 0 ? Math.min(...variantPrices) : undefined);
+  const productId = variant?.sku || sibling.productId;
+
+  return {
+    ec_name: sibling.title || sibling.colourName || productId,
+    ec_product_id: productId,
+    permanentid: productId,
+    ec_color: sibling.colourName,
+    ...(price === undefined ? {} : {ec_price: price, ec_promo_price: null}),
   };
 }
 

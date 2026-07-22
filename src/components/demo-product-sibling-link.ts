@@ -1,10 +1,11 @@
-import type {Product} from '@coveo/headless/commerce';
+import type {InteractiveProduct, Product} from '@coveo/headless/commerce';
 import {
   bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   getSiblingProductUrl,
   listenForSiblingSelection,
+  logSiblingProductClick,
   parseStyleGroupSiblings,
   resolveInteractiveProduct,
   resolveProductContext,
@@ -16,6 +17,7 @@ const TAG_NAME = 'demo-product-sibling-link';
 export class DemoProductSiblingLink extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
+  private interactiveProduct: InteractiveProduct | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private removeSelectionListener: (() => void) | null = null;
   private removeLinkAnalytics: (() => void) | null = null;
@@ -38,6 +40,7 @@ export class DemoProductSiblingLink extends HTMLElement {
       return;
     }
 
+    this.interactiveProduct = resolveInteractiveProduct(this);
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
     this.activeSibling = findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field));
     this.removeSelectionListener?.();
@@ -58,9 +61,11 @@ export class DemoProductSiblingLink extends HTMLElement {
     anchor.href = this.activeSibling ? getSiblingProductUrl(this.product, this.activeSibling) : this.product.clickUri;
     anchor.textContent = this.activeSibling?.title || this.product.ec_name || '';
 
-    // Emit Coveo product-click analytics (same behavior as atomic-product-link).
+    // Emit Coveo product-click analytics for the currently selected sibling color.
     this.removeLinkAnalytics?.();
-    this.removeLinkAnalytics = bindProductClickAnalytics(anchor, resolveInteractiveProduct(this));
+    this.removeLinkAnalytics = bindProductClickAnalytics(anchor, () =>
+      logSiblingProductClick(this.interactiveProduct, this.product, this.activeSibling)
+    );
 
     const style = document.createElement('style');
     style.textContent = ':host { display: block; } a { color: inherit; font: inherit; font-weight: inherit; text-decoration: none; } a:hover { text-decoration: underline; } a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }';

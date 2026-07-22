@@ -3,6 +3,7 @@ import {
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   listenForSiblingSelection,
+  logSiblingProductClick,
   parseStyleGroupSiblings,
   resolveInteractiveProduct,
   resolveProductContext,
@@ -191,8 +192,8 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
     dataLayer.push(payload);
     window.dataLayer = dataLayer;
 
-    // Also emit the Coveo product-click analytics event for the add-to-bag interaction.
-    this.interactiveProduct?.select();
+    // Also emit the Coveo product-click analytics event for the selected color + size variant.
+    logSiblingProductClick(this.interactiveProduct, this.product, this.activeSibling, variant);
   }
 
   private setActiveState() {
