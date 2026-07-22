@@ -976,19 +976,15 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
     </atomic-product-field-condition>
   </atomic-product-section-badges>
   <atomic-product-section-visual>
-    <atomic-product-field-condition if-defined="style_group_siblings">
+    <div class="demo-product-visual" style="position: relative; inline-size: 100%">
       <demo-product-sibling-image field="style_group_siblings"></demo-product-sibling-image>
-      <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
-    </atomic-product-field-condition>
-    <atomic-product-field-condition if-not-defined="style_group_siblings">
-      <atomic-product-field-condition if-defined="ec_images">
-        <atomic-product-image field="ec_images"></atomic-product-image>
+      <atomic-product-field-condition if-defined="style_group_siblings">
+        <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
       </atomic-product-field-condition>
-      <atomic-product-field-condition if-defined="ec_thumbnails">
-        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+      <atomic-product-field-condition if-not-defined="style_group_siblings">
+        <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
       </atomic-product-field-condition>
-      <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
-    </atomic-product-field-condition>
+    </div>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="brand">
@@ -1043,19 +1039,15 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
     </atomic-product-field-condition>
   </atomic-product-section-name>
   <atomic-product-section-visual>
-    <atomic-product-field-condition if-defined="style_group_siblings">
+    <div class="demo-product-visual" style="position: relative; inline-size: 100%">
       <demo-product-sibling-image field="style_group_siblings"></demo-product-sibling-image>
-      <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
-    </atomic-product-field-condition>
-    <atomic-product-field-condition if-not-defined="style_group_siblings">
-      <atomic-product-field-condition if-defined="imageurl">
-        <atomic-product-image field="imageurl"></atomic-product-image>
+      <atomic-product-field-condition if-defined="style_group_siblings">
+        <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
       </atomic-product-field-condition>
-      <atomic-product-field-condition if-defined="ec_thumbnails">
-        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+      <atomic-product-field-condition if-not-defined="style_group_siblings">
+        <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
       </atomic-product-field-condition>
-      <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
-    </atomic-product-field-condition>
+    </div>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="ec_brand">
@@ -1099,4 +1091,4 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
       </div>
     </section>
   `}async function xU(){const e=await IU()??EU();try{const t=yq(),n=AU();await Jq();const r=Oq({defaults:CU(t,n),defaultPresets:[Pi()],defaultProductTemplatePresets:n}),i=new Vq({organizationId:t.organizationId,accessToken:t.cmhAccessToken,defaults:t.defaults,...t.region?{region:t.region}:{}});await new oU({mount:e,config:t,cmhService:i,store:r}).init()}catch(t){_U(e,t)}}xU();
-//# sourceMappingURL=app-DXBfVzXj.js.map
+//# sourceMappingURL=app-Bli5fIhj.js.map
