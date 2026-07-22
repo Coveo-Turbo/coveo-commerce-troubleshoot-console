@@ -1,17 +1,26 @@
 <template>
   <atomic-product-section-name>
-    <demo-product-sibling-link
-      field="style_group_siblings"
-      class="font-bold"
-    ></demo-product-sibling-link>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-link field="style_group_siblings" class="font-bold"></demo-product-sibling-link>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-link class="font-bold"></atomic-product-link>
+    </atomic-product-field-condition>
   </atomic-product-section-name>
   <atomic-product-section-visual>
-    <demo-product-sibling-image
-      field="style_group_siblings"
-    ></demo-product-sibling-image>
-    <demo-product-sibling-size-selector
-      field="style_group_siblings"
-    ></demo-product-sibling-size-selector>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-image field="style_group_siblings"></demo-product-sibling-image>
+      <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-field-condition if-defined="imageurl">
+        <atomic-product-image field="imageurl"></atomic-product-image>
+      </atomic-product-field-condition>
+      <atomic-product-field-condition if-defined="ec_thumbnails">
+        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+      </atomic-product-field-condition>
+      <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
+    </atomic-product-field-condition>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="ec_brand">
@@ -31,14 +40,19 @@
     ></atomic-product-text>
   </atomic-product-section-description>
   <atomic-product-section-emphasized>
-    <demo-product-sibling-price
-      field="style_group_siblings"
-      currency="USD"
-    ></demo-product-sibling-price>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-price field="style_group_siblings" currency="USD"></demo-product-sibling-price>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-price currency="USD"></atomic-product-price>
+    </atomic-product-field-condition>
   </atomic-product-section-emphasized>
   <atomic-product-section-children>
-    <demo-product-sibling-swatches
-      field="style_group_siblings"
-    ></demo-product-sibling-swatches>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-swatches field="style_group_siblings"></demo-product-sibling-swatches>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-children></atomic-product-children>
+    </atomic-product-field-condition>
   </atomic-product-section-children>
 </template>

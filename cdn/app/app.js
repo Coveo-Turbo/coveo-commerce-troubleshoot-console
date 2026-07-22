@@ -957,10 +957,12 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
 </template>
 `,hU=`<template>
   <atomic-product-section-name>
-    <demo-product-sibling-link
-      field="style_group_siblings"
-      class="font-bold"
-    ></demo-product-sibling-link>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-link field="style_group_siblings" class="font-bold"></demo-product-sibling-link>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-link class="font-bold"></atomic-product-link>
+    </atomic-product-field-condition>
   </atomic-product-section-name>
   <atomic-product-section-badges>
     <atomic-product-field-condition must-match-newflag="EnumProductCallouts1">
@@ -974,12 +976,19 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
     </atomic-product-field-condition>
   </atomic-product-section-badges>
   <atomic-product-section-visual>
-    <demo-product-sibling-image
-      field="style_group_siblings"
-    ></demo-product-sibling-image>
-    <demo-product-sibling-size-selector
-      field="style_group_siblings"
-    ></demo-product-sibling-size-selector>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-image field="style_group_siblings"></demo-product-sibling-image>
+      <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-field-condition if-defined="ec_images">
+        <atomic-product-image field="ec_images"></atomic-product-image>
+      </atomic-product-field-condition>
+      <atomic-product-field-condition if-defined="ec_thumbnails">
+        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+      </atomic-product-field-condition>
+      <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
+    </atomic-product-field-condition>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="brand">
@@ -1005,34 +1014,48 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
     </atomic-product-field-condition>
   </atomic-product-section-metadata>
   <atomic-product-section-emphasized>
-    <demo-product-sibling-price
-      field="style_group_siblings"
-      currency="USD"
-    ></demo-product-sibling-price>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-price field="style_group_siblings" currency="USD"></demo-product-sibling-price>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-price currency="USD"></atomic-product-price>
+    </atomic-product-field-condition>
   </atomic-product-section-emphasized>
   <atomic-product-section-description>
     <atomic-product-excerpt></atomic-product-excerpt>
   </atomic-product-section-description>
   <atomic-product-section-children>
-    <demo-product-sibling-swatches
-      field="style_group_siblings"
-    ></demo-product-sibling-swatches>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-swatches field="style_group_siblings"></demo-product-sibling-swatches>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-children></atomic-product-children>
+    </atomic-product-field-condition>
   </atomic-product-section-children>
 </template>
 `,gU=`<template>
   <atomic-product-section-name>
-    <demo-product-sibling-link
-      field="style_group_siblings"
-      class="font-bold"
-    ></demo-product-sibling-link>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-link field="style_group_siblings" class="font-bold"></demo-product-sibling-link>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-link class="font-bold"></atomic-product-link>
+    </atomic-product-field-condition>
   </atomic-product-section-name>
   <atomic-product-section-visual>
-    <demo-product-sibling-image
-      field="style_group_siblings"
-    ></demo-product-sibling-image>
-    <demo-product-sibling-size-selector
-      field="style_group_siblings"
-    ></demo-product-sibling-size-selector>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-image field="style_group_siblings"></demo-product-sibling-image>
+      <demo-product-sibling-size-selector field="style_group_siblings"></demo-product-sibling-size-selector>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-field-condition if-defined="imageurl">
+        <atomic-product-image field="imageurl"></atomic-product-image>
+      </atomic-product-field-condition>
+      <atomic-product-field-condition if-defined="ec_thumbnails">
+        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+      </atomic-product-field-condition>
+      <demo-product-size-selector field="ec_size" swatch-field="swatch_hex"></demo-product-size-selector>
+    </atomic-product-field-condition>
   </atomic-product-section-visual>
   <atomic-product-section-metadata>
     <atomic-product-field-condition if-defined="ec_brand">
@@ -1052,15 +1075,20 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
     ></atomic-product-text>
   </atomic-product-section-description>
   <atomic-product-section-emphasized>
-    <demo-product-sibling-price
-      field="style_group_siblings"
-      currency="USD"
-    ></demo-product-sibling-price>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-price field="style_group_siblings" currency="USD"></demo-product-sibling-price>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-price currency="USD"></atomic-product-price>
+    </atomic-product-field-condition>
   </atomic-product-section-emphasized>
   <atomic-product-section-children>
-    <demo-product-sibling-swatches
-      field="style_group_siblings"
-    ></demo-product-sibling-swatches>
+    <atomic-product-field-condition if-defined="style_group_siblings">
+      <demo-product-sibling-swatches field="style_group_siblings"></demo-product-sibling-swatches>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-not-defined="style_group_siblings">
+      <atomic-product-children></atomic-product-children>
+    </atomic-product-field-condition>
   </atomic-product-section-children>
 </template>
 `,yU=120,vU=1e4;function SU(e){return new Promise(t=>{setTimeout(t,e)})}function bU(e){const t=e.querySelector("[data-template='troubleshoot']");return t||e.querySelector(".troubleshoot-root")}function wU(){const e=[document],t=[...document.querySelectorAll("atomic-hosted-ui")];for(const n of t)n.shadowRoot&&e.push(n.shadowRoot);return e}async function IU(){const e=Date.now()+vU;for(;Date.now()<e;){for(const t of wU()){const n=bU(t);if(n)return n}await SU(yU)}return null}function EU(){const e=document.createElement("div");return e.dataset.template="troubleshoot",document.body.append(e),e}function _t(e){return e.trim()}function CU(e,t){const n=`${e.defaults.language}-${e.defaults.country}-${e.defaults.currency}`.toLowerCase(),r=e.defaultProductTemplatePresetId||"default",i=t.find(o=>o.id===r)??t.find(o=>o.id==="default")??t[0],s=(i==null?void 0:i.productTemplates)??{productList:"",instantProducts:""};return{mode:"search",selectedTrackingId:e.defaults.trackingId||"",selectedLocaleId:n,selectedListingId:"",selectedContextPresetId:"default",selectedProductTemplatePresetId:(i==null?void 0:i.id)??"default",isTopPanelMinimized:!0,isSessionPanelMinimized:!0,productListOptions:{display:"grid",density:"compact",imageSize:"large",instantProductsImageSize:"small"},productTemplates:{productList:s.productList,instantProducts:s.instantProducts},advancedContext:{custom:{},dictionaryFieldContext:{}}}}function AU(){const e={id:"default",label:"Atomic Default",productTemplates:{productList:_t(aU),instantProducts:_t(cU)}},t={id:"atomic-example-1",label:"Atomic Example 1",productTemplates:{productList:_t(uU),instantProducts:_t(lU)}},n={id:"atomic-example-2",label:"Atomic Example 2",productTemplates:{productList:_t(dU),instantProducts:_t(fU)}},r={id:"atomic-color-swatch-demo",label:"Color Swatch Demo",productTemplates:{productList:_t(pU),instantProducts:_t(mU)}},i={id:"atomic-sibling-swatch-demo",label:"Sibling Swatch Demo",productTemplates:{productList:_t(hU),instantProducts:_t(gU)}};return[e,t,n,r,i]}function TU(e){return e.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}function _U(e,t){const n=t instanceof Error?t.message:"Unknown initialization error.",r=t instanceof hl?` (${t.domain})`:"";e.innerHTML=`
@@ -1071,4 +1099,4 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
       </div>
     </section>
   `}async function xU(){const e=await IU()??EU();try{const t=yq(),n=AU();await Jq();const r=Oq({defaults:CU(t,n),defaultPresets:[Pi()],defaultProductTemplatePresets:n}),i=new Vq({organizationId:t.organizationId,accessToken:t.cmhAccessToken,defaults:t.defaults,...t.region?{region:t.region}:{}});await new oU({mount:e,config:t,cmhService:i,store:r}).init()}catch(t){_U(e,t)}}xU();
-//# sourceMappingURL=app-CUwX1IGy.js.map
+//# sourceMappingURL=app-DtgGIbr2.js.map
