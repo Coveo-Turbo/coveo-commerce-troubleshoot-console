@@ -1,4 +1,4 @@
-import type {InteractiveProduct, Product} from '@coveo/headless/commerce';
+import type {CommerceEngine, Product} from '@coveo/headless/commerce';
 import {
   bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
@@ -7,7 +7,7 @@ import {
   listenForSiblingSelection,
   logSiblingProductClick,
   parseStyleGroupSiblings,
-  resolveInteractiveProduct,
+  resolveCommerceEngine,
   resolveProductContext,
   type StyleGroupSibling,
 } from './demo-product-sibling-data';
@@ -17,7 +17,7 @@ const TAG_NAME = 'demo-product-sibling-link';
 export class DemoProductSiblingLink extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
-  private interactiveProduct: InteractiveProduct | null = null;
+  private engine: CommerceEngine | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private removeSelectionListener: (() => void) | null = null;
   private removeLinkAnalytics: (() => void) | null = null;
@@ -40,7 +40,7 @@ export class DemoProductSiblingLink extends HTMLElement {
       return;
     }
 
-    this.interactiveProduct = resolveInteractiveProduct(this);
+    this.engine = resolveCommerceEngine(this);
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
     this.activeSibling = findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field));
     this.removeSelectionListener?.();
@@ -64,7 +64,7 @@ export class DemoProductSiblingLink extends HTMLElement {
     // Emit Coveo product-click analytics for the currently selected sibling color.
     this.removeLinkAnalytics?.();
     this.removeLinkAnalytics = bindProductClickAnalytics(anchor, () =>
-      logSiblingProductClick(this.interactiveProduct, this.product, this.activeSibling)
+      logSiblingProductClick(this.engine, this.product, this.activeSibling)
     );
 
     const style = document.createElement('style');

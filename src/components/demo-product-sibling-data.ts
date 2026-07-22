@@ -1,10 +1,10 @@
-import {ProductTemplatesHelpers, type InteractiveProduct, type Product} from '@coveo/headless/commerce';
+import {ProductTemplatesHelpers, type CommerceEngine, type Product} from '@coveo/headless/commerce';
 
 export const DEFAULT_SIBLINGS_FIELD = 'style_group_siblings';
 export const SELECT_SIBLING_EVENT_NAME = 'demo/selectSiblingProduct';
 export const RESOLVE_PRODUCT_EVENT_NAME = 'atomic/resolveResult';
-// Same context event atomic-product-link uses to obtain the InteractiveProduct controller.
-export const RESOLVE_INTERACTIVE_PRODUCT_EVENT_NAME = 'atomic/resolveInteractiveResult';
+// Atomic's component-initialization event; its detail callback receives the interface bindings.
+export const INITIALIZE_COMPONENT_EVENT_NAME = 'atomic/initializeComponent';
 
 export type StyleGroupSiblingVariant = {
   variantId: string;
@@ -220,25 +220,28 @@ export function resolveProductContext(element: HTMLElement): Product | null {
 }
 
 /**
- * Resolves the `InteractiveProduct` controller from the parent `atomic-product`, using the same
- * `atomic/resolveInteractiveResult` context event that `atomic-product-link` relies on. Returns
- * null when the component is not hosted inside an Atomic product (e.g., in isolated tests).
+ * Resolves the Coveo commerce engine from the parent Atomic interface via the
+ * `atomic/initializeComponent` event (whose detail callback receives the interface bindings).
+ * Returns null when not hosted inside an Atomic commerce interface (e.g., in isolated tests).
  */
-export function resolveInteractiveProduct(element: HTMLElement): InteractiveProduct | null {
-  let interactiveProduct: InteractiveProduct | null = null;
+export function resolveCommerceEngine(element: HTMLElement): CommerceEngine | null {
+  let engine: CommerceEngine | null = null;
 
   element.dispatchEvent(
-    new CustomEvent<(value: InteractiveProduct) => void>(RESOLVE_INTERACTIVE_PRODUCT_EVENT_NAME, {
-      detail: (resolved) => {
-        interactiveProduct = resolved;
-      },
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-    })
+    new CustomEvent<(bindings: {engine?: CommerceEngine} | undefined) => void>(
+      INITIALIZE_COMPONENT_EVENT_NAME,
+      {
+        detail: (bindings) => {
+          engine = bindings?.engine ?? null;
+        },
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+      }
+    )
   );
 
-  return interactiveProduct;
+  return engine;
 }
 
 /**
@@ -272,56 +275,52 @@ export function bindProductClickAnalytics(
   };
 }
 
+type CommerceRelayState = {
+  commerceContext?: {currency?: string};
+  commerceSearch?: {responseId?: string};
+  productListing?: {responseId?: string};
+};
+
 /**
- * Coveo `ec.productClick` reads its payload (name, price, productId, permanentid) live from the
- * product object the Atomic `InteractiveProduct` controller wraps — which is the same object shared
- * by reference with these components. Because the app and Atomic bundle separate Headless copies, we
- * cannot rebuild a controller for the sibling; instead we temporarily patch the shared product's
- * analytics fields to the selected sibling/variant, log the click, then restore them synchronously.
+ * Emits a Coveo `ec.productClick` event for the selected sibling directly through the engine's relay
+ * client — the same event `productClick` dispatches internally. This avoids the `InteractiveProduct`
+ * controller entirely, which is important because the sibling is a distinct product surfaced through
+ * the custom `style_group_siblings` field rather than a product returned in the result set. The
+ * variant SKU is used as the productId so add-to-bag clicks reflect the selected color + size.
  */
 export function logSiblingProductClick(
-  interactiveProduct: InteractiveProduct | null,
+  engine: CommerceEngine | null,
   product: Product | null,
   sibling: StyleGroupSibling | null,
   variant?: StyleGroupSiblingVariant
 ): void {
-  if (!interactiveProduct || !product || !sibling) {
-    interactiveProduct?.select();
+  const relay = (engine as unknown as {relay?: {emit?: (name: string, payload: unknown) => void}} | null)
+    ?.relay;
+  if (!engine || !relay?.emit || !product || !sibling) {
     return;
   }
 
-  const overrides = buildSiblingClickOverrides(sibling, variant);
-  const target = product as unknown as Record<string, unknown>;
-  const snapshot: Record<string, unknown> = {};
-  for (const key of Object.keys(overrides)) {
-    snapshot[key] = target[key];
-  }
+  const state = (engine as unknown as {state?: CommerceRelayState}).state ?? {};
+  const productRecord = product as unknown as {position?: number; responseId?: string};
 
-  Object.assign(target, overrides);
-  try {
-    interactiveProduct.select();
-  } finally {
-    Object.assign(target, snapshot);
-  }
-}
-
-function buildSiblingClickOverrides(
-  sibling: StyleGroupSibling,
-  variant?: StyleGroupSiblingVariant
-): Record<string, unknown> {
   const variantPrices = sibling.variants
     .map((candidate) => candidate.price)
-    .filter((price): price is number => typeof price === 'number');
-  const price = variant?.price ?? (variantPrices.length > 0 ? Math.min(...variantPrices) : undefined);
+    .filter((candidate): candidate is number => typeof candidate === 'number');
+  const price = variant?.price ?? (variantPrices.length > 0 ? Math.min(...variantPrices) : Number.NaN);
   const productId = variant?.sku || sibling.productId;
+  const responseId =
+    productRecord.responseId ?? state.commerceSearch?.responseId ?? state.productListing?.responseId;
 
-  return {
-    ec_name: sibling.title || sibling.colourName || productId,
-    ec_product_id: productId,
-    permanentid: productId,
-    ec_color: sibling.colourName,
-    ...(price === undefined ? {} : {ec_price: price, ec_promo_price: null}),
-  };
+  relay.emit('ec.productClick', {
+    currency: state.commerceContext?.currency,
+    product: {
+      name: sibling.title || sibling.colourName || productId,
+      price,
+      productId,
+    },
+    position: productRecord.position,
+    responseId,
+  });
 }
 
 export function getProductCard(element: HTMLElement): HTMLElement | null {

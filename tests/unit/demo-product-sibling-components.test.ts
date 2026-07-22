@@ -78,18 +78,22 @@ function buildCard(product: Product) {
     (event as CustomEvent<(resolved: Product) => void>).detail(product);
   });
 
-  const selectSnapshots: Array<{productId: unknown; name: unknown}> = [];
-  const interactiveProduct = {
-    select: vi.fn(() => {
-      const record = product as unknown as Record<string, unknown>;
-      selectSnapshots.push({productId: record.ec_product_id, name: record.ec_name});
-    }),
-    beginDelayedSelect: vi.fn(),
-    cancelPendingSelect: vi.fn(),
-    warningMessage: undefined,
+  const productClicks: Array<Record<string, unknown>> = [];
+  const engine = {
+    relay: {
+      emit: vi.fn((name: string, payload: Record<string, unknown>) => {
+        if (name === 'ec.productClick') {
+          productClicks.push(payload);
+        }
+      }),
+    },
+    state: {
+      commerceContext: {currency: 'CAD'},
+      commerceSearch: {responseId: 'resp-1'},
+    },
   };
-  card.addEventListener('atomic/resolveInteractiveResult', (event) => {
-    (event as CustomEvent<(resolved: typeof interactiveProduct) => void>).detail(interactiveProduct);
+  card.addEventListener('atomic/initializeComponent', (event) => {
+    (event as CustomEvent<(bindings: {engine: typeof engine}) => void>).detail({engine});
   });
 
   const link = document.createElement('demo-product-sibling-link');
@@ -110,7 +114,7 @@ function buildCard(product: Product) {
   card.append(link, price, visual, children);
   document.body.append(card);
 
-  return {card, image, link, price, sizeSelector, swatches, interactiveProduct, selectSnapshots};
+  return {card, image, link, price, sizeSelector, swatches, engine, productClicks};
 }
 
 async function flushMicrotasks() {
@@ -219,38 +223,40 @@ describe('sibling-aware product components', () => {
     expect(image.shadowRoot?.querySelector('button[data-action="next-image"]')).toBeNull();
   });
 
-  it('emits Coveo product-click analytics when the title link is clicked', async () => {
-    const {link, interactiveProduct, selectSnapshots} = buildCard(buildProduct());
+  it('emits an ec.productClick via relay when the title link is clicked', async () => {
+    const {link, engine, productClicks} = buildCard(buildProduct());
     await flushMicrotasks();
 
     link.shadowRoot?.querySelector<HTMLAnchorElement>('a')?.dispatchEvent(
       new MouseEvent('click', {bubbles: true})
     );
 
-    expect(interactiveProduct.select).toHaveBeenCalled();
-    expect(selectSnapshots[0]).toEqual({
-      productId: 'gid://shopify/Product/8997353521321',
-      name: 'Heritage Crew Tee - Biscotti',
+    expect(engine.relay.emit).toHaveBeenCalledWith('ec.productClick', expect.anything());
+    expect(productClicks[0]).toMatchObject({
+      currency: 'CAD',
+      responseId: 'resp-1',
+      position: 1,
+      product: {productId: 'gid://shopify/Product/8997353521321', name: 'Heritage Crew Tee - Biscotti'},
     });
   });
 
-  it('logs a product-click on right-click (contextmenu) of the title link', async () => {
-    const {link, selectSnapshots} = buildCard(buildProduct());
+  it('emits a product-click on right-click (contextmenu) of the title link', async () => {
+    const {link, productClicks} = buildCard(buildProduct());
     await flushMicrotasks();
 
-    // Right-click fires contextmenu/mousedown (not click); it must still log a product-click.
+    // Right-click fires contextmenu/mousedown (not click); it must still emit a product-click.
     link.shadowRoot?.querySelector<HTMLAnchorElement>('a')?.dispatchEvent(
       new MouseEvent('contextmenu', {bubbles: true, button: 2})
     );
 
-    expect(selectSnapshots.at(-1)).toEqual({
+    expect(productClicks.at(-1)?.product).toMatchObject({
       productId: 'gid://shopify/Product/8997353521321',
       name: 'Heritage Crew Tee - Biscotti',
     });
   });
 
-  it('logs the selected sibling (not the initial product) after a swatch swap', async () => {
-    const {link, swatches, selectSnapshots} = buildCard(buildProduct());
+  it('emits the selected sibling (not the initial product) after a swatch swap', async () => {
+    const {link, swatches, productClicks} = buildCard(buildProduct());
     await flushMicrotasks();
 
     // Swap to Burnt Olive, then click the title link.
@@ -259,14 +265,14 @@ describe('sibling-aware product components', () => {
       new MouseEvent('click', {bubbles: true})
     );
 
-    expect(selectSnapshots.at(-1)).toEqual({
+    expect(productClicks.at(-1)?.product).toMatchObject({
       productId: 'gid://shopify/Product/8997353586857',
       name: 'Heritage Crew Tee - Burnt Olive',
     });
   });
 
-  it('logs the selected color + size variant on add-to-bag in addition to the dataLayer event', async () => {
-    const {sizeSelector, swatches, selectSnapshots} = buildCard(buildProduct());
+  it('emits the selected color + size variant on add-to-bag in addition to the dataLayer event', async () => {
+    const {sizeSelector, swatches, productClicks} = buildCard(buildProduct());
     await flushMicrotasks();
 
     // Swap to Burnt Olive, then add its XS variant to bag.
@@ -276,7 +282,7 @@ describe('sibling-aware product components', () => {
 
     expect((window.dataLayer ?? []).length).toBe(1);
     // Variant SKU is used as the productId so the click reflects color + size.
-    expect(selectSnapshots.at(-1)).toEqual({
+    expect(productClicks.at(-1)?.product).toMatchObject({
       productId: 'HCT-BROL-XS',
       name: 'Heritage Crew Tee - Burnt Olive',
     });

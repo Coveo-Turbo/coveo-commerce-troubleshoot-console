@@ -1,11 +1,11 @@
-import type {InteractiveProduct, Product} from '@coveo/headless/commerce';
+import type {CommerceEngine, Product} from '@coveo/headless/commerce';
 import {
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   listenForSiblingSelection,
   logSiblingProductClick,
   parseStyleGroupSiblings,
-  resolveInteractiveProduct,
+  resolveCommerceEngine,
   resolveProductContext,
   type StyleGroupSibling,
   type StyleGroupSiblingVariant,
@@ -41,7 +41,7 @@ function escapeHtml(value: string): string {
 export class DemoProductSiblingSizeSelector extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
-  private interactiveProduct: InteractiveProduct | null = null;
+  private engine: CommerceEngine | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private selectedVariantId = '';
   private hoverTarget: HTMLElement | null = null;
@@ -116,7 +116,7 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
       return;
     }
 
-    this.interactiveProduct = resolveInteractiveProduct(this);
+    this.engine = resolveCommerceEngine(this);
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
     this.setActiveSibling(findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field)));
     this.removeSelectionListener?.();
@@ -193,7 +193,7 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
     window.dataLayer = dataLayer;
 
     // Also emit the Coveo product-click analytics event for the selected color + size variant.
-    logSiblingProductClick(this.interactiveProduct, this.product, this.activeSibling, variant);
+    logSiblingProductClick(this.engine, this.product, this.activeSibling, variant);
   }
 
   private setActiveState() {
