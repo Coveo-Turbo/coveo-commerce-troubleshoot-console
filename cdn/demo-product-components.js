@@ -15447,7 +15447,7 @@ function fa(e, t, r, n) {
   const i = e == null ? void 0 : e.relay;
   if (!e || !(i != null && i.emit) || !t || !r)
     return;
-  const s = $x(e), o = t, a = r.variants.map((h) => h.price).filter((h) => typeof h == "number"), c = (n == null ? void 0 : n.price) ?? (a.length > 0 ? Math.min(...a) : Number.NaN), u = (n == null ? void 0 : n.sku) || r.productId, l = o.responseId ?? ((f = s == null ? void 0 : s.commerceSearch) == null ? void 0 : f.responseId) ?? ((p = s == null ? void 0 : s.productListing) == null ? void 0 : p.responseId);
+  const s = $x(e), o = t, a = r.variants.map((h) => h.price).filter((h) => typeof h == "number"), c = (n == null ? void 0 : n.price) ?? (a.length > 0 ? Math.min(...a) : Number.NaN), u = (n == null ? void 0 : n.variantId) || (n == null ? void 0 : n.sku) || r.productId, l = o.responseId ?? ((f = s == null ? void 0 : s.commerceSearch) == null ? void 0 : f.responseId) ?? ((p = s == null ? void 0 : s.productListing) == null ? void 0 : p.responseId);
   i.emit("ec.productClick", {
     currency: (g = s == null ? void 0 : s.commerceContext) == null ? void 0 : g.currency,
     product: {
@@ -15805,7 +15805,7 @@ class Wx extends HTMLElement {
       ecommerce: {
         items: [
           {
-            item_id: r.sku || r.variantId,
+            item_id: r.variantId || r.sku,
             item_name: this.activeSibling.title,
             item_group_id: this.activeSibling.productId,
             item_variant: [this.activeSibling.colourName, r.size].filter(Boolean).join(" / "),

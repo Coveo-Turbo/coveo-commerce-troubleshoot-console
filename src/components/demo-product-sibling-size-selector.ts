@@ -175,7 +175,7 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
       ecommerce: {
         items: [
           {
-            item_id: variant.sku || variant.variantId,
+            item_id: variant.variantId || variant.sku,
             item_name: this.activeSibling.title,
             item_group_id: this.activeSibling.productId,
             item_variant: [this.activeSibling.colourName, variant.size].filter(Boolean).join(' / '),

@@ -182,7 +182,7 @@ describe('sibling-aware product components', () => {
         value: 59.95,
         items: [
           {
-            item_id: 'HCT-BROL-L',
+            item_id: 'gid://shopify/ProductVariant/4',
             item_name: 'Heritage Crew Tee - Burnt Olive',
             item_group_id: 'gid://shopify/Product/8997353586857',
             item_variant: 'Burnt Olive / L',
@@ -282,9 +282,9 @@ describe('sibling-aware product components', () => {
     sizeButtons?.[0]?.click();
 
     expect((window.dataLayer ?? []).length).toBe(1);
-    // Variant SKU is used as the productId so the click reflects color + size.
+    // Variant gid is used as the productId so the click reflects color + size.
     expect(productClicks.at(-1)?.product).toMatchObject({
-      productId: 'HCT-BROL-XS',
+      productId: 'gid://shopify/ProductVariant/3',
       name: 'Heritage Crew Tee - Burnt Olive',
     });
   });

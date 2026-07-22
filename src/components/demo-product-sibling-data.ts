@@ -317,7 +317,7 @@ export function logSiblingProductClick(
     .map((candidate) => candidate.price)
     .filter((candidate): candidate is number => typeof candidate === 'number');
   const price = variant?.price ?? (variantPrices.length > 0 ? Math.min(...variantPrices) : Number.NaN);
-  const productId = variant?.sku || sibling.productId;
+  const productId = variant?.variantId || variant?.sku || sibling.productId;
   const responseId =
     productRecord.responseId ?? state?.commerceSearch?.responseId ?? state?.productListing?.responseId;
 
