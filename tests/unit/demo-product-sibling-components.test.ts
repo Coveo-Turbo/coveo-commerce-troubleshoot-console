@@ -87,7 +87,8 @@ function buildCard(product: Product) {
         }
       }),
     },
-    state: {
+    // Headless keys engine state under this globally-registered symbol.
+    [Symbol.for('coveo-headless-internal-state')]: {
       commerceContext: {currency: 'CAD'},
       commerceSearch: {responseId: 'resp-1'},
     },

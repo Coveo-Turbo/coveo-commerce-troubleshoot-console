@@ -245,9 +245,11 @@ export function resolveCommerceEngine(element: HTMLElement): CommerceEngine | nu
 }
 
 /**
- * Binds Coveo product-click analytics to an anchor, mirroring Atomic's `bindAnalyticsToLink`:
- * `click`/`contextmenu`/`mousedown`/`mouseup` trigger the provided `onSelect`. Propagation is
- * stopped so the host card does not double-handle the interaction. Returns a cleanup function.
+ * Binds Coveo product-click analytics to an anchor. Unlike Atomic's `bindAnalyticsToLink` (which
+ * relies on the InteractiveProduct controller's internal debounce), we emit directly, so we bind
+ * only non-overlapping events — `click` (left), `contextmenu` (right), `auxclick` (middle) — to
+ * fire `onSelect` exactly once per interaction. Propagation is stopped so the host card does not
+ * double-handle the interaction. Returns a cleanup function.
  */
 export function bindProductClickAnalytics(
   anchor: HTMLAnchorElement,
@@ -263,7 +265,7 @@ export function bindProductClickAnalytics(
     onSelect();
   };
 
-  const selectEvents = ['click', 'contextmenu', 'mousedown', 'mouseup'] as const;
+  const selectEvents = ['click', 'contextmenu', 'auxclick'] as const;
   for (const name of selectEvents) {
     anchor.addEventListener(name, handler);
   }
@@ -275,11 +277,19 @@ export function bindProductClickAnalytics(
   };
 }
 
+// Globally-registered symbol Headless uses to key the engine's internal state. Using the same
+// registered symbol lets us read state even when the app and Atomic bundle separate Headless copies.
+const HEADLESS_STATE_KEY = Symbol.for('coveo-headless-internal-state');
+
 type CommerceRelayState = {
   commerceContext?: {currency?: string};
   commerceSearch?: {responseId?: string};
   productListing?: {responseId?: string};
 };
+
+function readCommerceState(engine: CommerceEngine): CommerceRelayState | undefined {
+  return (engine as unknown as Record<symbol, CommerceRelayState | undefined>)[HEADLESS_STATE_KEY];
+}
 
 /**
  * Emits a Coveo `ec.productClick` event for the selected sibling directly through the engine's relay
@@ -300,7 +310,7 @@ export function logSiblingProductClick(
     return;
   }
 
-  const state = (engine as unknown as {state?: CommerceRelayState}).state ?? {};
+  const state = readCommerceState(engine);
   const productRecord = product as unknown as {position?: number; responseId?: string};
 
   const variantPrices = sibling.variants
@@ -309,10 +319,10 @@ export function logSiblingProductClick(
   const price = variant?.price ?? (variantPrices.length > 0 ? Math.min(...variantPrices) : Number.NaN);
   const productId = variant?.sku || sibling.productId;
   const responseId =
-    productRecord.responseId ?? state.commerceSearch?.responseId ?? state.productListing?.responseId;
+    productRecord.responseId ?? state?.commerceSearch?.responseId ?? state?.productListing?.responseId;
 
   relay.emit('ec.productClick', {
-    currency: state.commerceContext?.currency,
+    currency: state?.commerceContext?.currency,
     product: {
       name: sibling.title || sibling.colourName || productId,
       price,
