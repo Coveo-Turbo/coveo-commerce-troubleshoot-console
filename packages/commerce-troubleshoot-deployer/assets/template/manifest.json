@@ -6,12 +6,12 @@
       "bytes": 41
     },
     "js/app.js": {
-      "sha256": "c1fee8a9f9d7c2c77b511ab22661d9df617f17cb72a44fe02ce1ca9747a4d20c",
-      "bytes": 679603
+      "sha256": "b90809e9f275256cbae8d8062e0e5b7ac91297dc60807692ffc8a02f66a1ee10",
+      "bytes": 678353
     },
     "styles/main.css": {
-      "sha256": "19335c502ab2832917469ddc199d68b409ce25227ea17ac830f97bbd86639b77",
-      "bytes": 15107
+      "sha256": "4fd78287dc82971fbad9a44861be28210a5167f95af39ae07da43c0298eefb1b",
+      "bytes": 15217
     }
   }
 }

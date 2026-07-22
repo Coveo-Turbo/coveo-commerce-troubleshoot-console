@@ -120,7 +120,7 @@ export class DemoProductSiblingImage extends HTMLElement {
       previousButton.className = 'carousel-control carousel-previous';
       previousButton.dataset.action = 'previous-image';
       previousButton.setAttribute('aria-label', 'Show previous product image');
-      previousButton.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10 3-5 5 5 5" /></svg>';
+      previousButton.textContent = '\u2039';
       previousButton.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -132,7 +132,7 @@ export class DemoProductSiblingImage extends HTMLElement {
       nextButton.className = 'carousel-control carousel-next';
       nextButton.dataset.action = 'next-image';
       nextButton.setAttribute('aria-label', 'Show next product image');
-      nextButton.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>';
+      nextButton.textContent = '\u203a';
       nextButton.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -172,8 +172,7 @@ export class DemoProductSiblingImage extends HTMLElement {
       .gallery:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
       a { display: block; inline-size: 100%; block-size: 100%; }
       img { display: block; inline-size: 100%; block-size: 100%; object-fit: var(--demo-sibling-image-fit, cover); object-position: center; }
-      .carousel-control { appearance: none; display: grid; position: absolute; inset-block-start: 50%; z-index: 1; inline-size: 2.25rem; block-size: 2.25rem; place-items: center; border: 1px solid rgb(17 24 39 / 18%); border-radius: 999px; background: rgb(255 255 255 / 92%); color: #111827; cursor: pointer; opacity: 0; transform: translateY(-50%); transition: opacity 120ms ease, background 120ms ease, transform 120ms ease; }
-      .carousel-control svg { inline-size: 1.1rem; block-size: 1.1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
+      .carousel-control { appearance: none; display: grid; position: absolute; inset-block-start: 50%; z-index: 1; inline-size: 2.25rem; block-size: 2.25rem; place-items: center; border: 1px solid rgb(17 24 39 / 18%); border-radius: 999px; background: rgb(255 255 255 / 92%); color: #111827; cursor: pointer; font-size: 1.35rem; line-height: 1; opacity: 0; transform: translateY(-50%); transition: opacity 120ms ease, background 120ms ease, transform 120ms ease; }
       .carousel-previous { inset-inline-start: .5rem; }
       .carousel-next { inset-inline-end: .5rem; }
       .gallery:hover .carousel-control, .carousel-control:focus-visible { opacity: 1; }

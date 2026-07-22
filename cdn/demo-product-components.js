@@ -12772,12 +12772,12 @@ function JI() {
 }
 var ZI = JI();
 const XI = /* @__PURE__ */ zr(ZI);
-var Nn = { exports: {} }, e0 = Nn.exports, Au;
-function t0() {
+var Nn = { exports: {} }, eA = Nn.exports, Au;
+function tA() {
   return Au || (Au = 1, (function(e, t) {
     (function(r, n) {
       e.exports = n();
-    })(e0, (function() {
+    })(eA, (function() {
       var r = "minute", n = /[+-]\d\d(?::?\d\d)?/g, i = /([+-]|\d\d)/g;
       return function(s, o, a) {
         var c = o.prototype;
@@ -12847,11 +12847,11 @@ function t0() {
     }));
   })(Nn)), Nn.exports;
 }
-var r0 = t0();
-const n0 = /* @__PURE__ */ zr(r0);
-Ne.extend(n0);
+var rA = tA();
+const nA = /* @__PURE__ */ zr(rA);
+Ne.extend(nA);
 Ne.extend(XI);
-const i0 = () => ({
+const iA = () => ({
   organizationId: "",
   accessToken: "",
   search: {
@@ -12876,20 +12876,20 @@ const i0 = () => ({
     agentId: void 0
   },
   environment: "prod"
-}), s0 = /(^|; )Coveo-Pendragon=([^;]*)/, o0 = /(^|; )Coveo-SearchAgentDebug=([^;]*)/;
-function a0() {
+}), sA = /(^|; )Coveo-Pendragon=([^;]*)/, oA = /(^|; )Coveo-SearchAgentDebug=([^;]*)/;
+function aA() {
   var e;
-  return typeof window > "u" ? !1 : ((e = s0.exec(document.cookie)) == null ? void 0 : e.pop()) || null;
+  return typeof window > "u" ? !1 : ((e = sA.exec(document.cookie)) == null ? void 0 : e.pop()) || null;
 }
-function c0() {
-  return typeof window > "u" ? !1 : o0.test(document.cookie);
+function cA() {
+  return typeof window > "u" ? !1 : oA.test(document.cookie);
 }
-se(i0(), (e) => e.addCase(_l, (t, r) => {
-  u0(t, r.payload);
+se(iA(), (e) => e.addCase(_l, (t, r) => {
+  uA(t, r.payload);
 }).addCase(im, (t, r) => {
-  l0(t, r.payload);
+  lA(t, r.payload);
 }).addCase(sm, (t, r) => {
-  d0(t, r.payload);
+  dA(t, r.payload);
 }).addCase(om, (t) => {
   t.analytics.enabled = !1;
 }).addCase(am, (t) => {
@@ -12905,31 +12905,31 @@ se(i0(), (e) => e.addCase(_l, (t, r) => {
 }).addCase(wt, (t, r) => {
   ee(r.payload.tab) || (t.analytics.originLevel2 = r.payload.tab);
 }).addCase(lm, (t, { payload: r }) => {
-  f0(t, r);
+  fA(t, r);
 }));
-function u0(e, t) {
+function uA(e, t) {
   ee(t.accessToken) || (e.accessToken = t.accessToken), e.environment = t.environment ?? "prod", ee(t.organizationId) || (e.organizationId = t.organizationId);
 }
-function l0(e, t) {
+function lA(e, t) {
   ee(t.proxyBaseUrl) || (e.search.apiBaseUrl = t.proxyBaseUrl), ee(t.locale) || (e.search.locale = t.locale), ee(t.timezone) || (e.search.timezone = t.timezone), ee(t.authenticationProviders) || (e.search.authenticationProviders = t.authenticationProviders);
 }
-function d0(e, t) {
+function dA(e, t) {
   ee(t.enabled) || (e.analytics.enabled = t.enabled), ee(t.originContext) || (e.analytics.originContext = t.originContext), ee(t.originLevel2) || (e.analytics.originLevel2 = t.originLevel2), ee(t.originLevel3) || (e.analytics.originLevel3 = t.originLevel3), ee(t.proxyBaseUrl) || (e.analytics.apiBaseUrl = t.proxyBaseUrl), ee(t.trackingId) || (e.analytics.trackingId = t.trackingId), ee(t.analyticsMode) || (e.analytics.analyticsMode = t.analyticsMode), ee(t.source) || (e.analytics.source = t.source);
   try {
-    const r = a0();
+    const r = aA();
     r && (e.analytics.analyticsMode = "next", e.analytics.trackingId = r);
   } catch {
   }
   ee(t.runtimeEnvironment) || (e.analytics.runtimeEnvironment = t.runtimeEnvironment), ee(t.anonymous) || (e.analytics.anonymous = t.anonymous), ee(t.deviceId) || (e.analytics.deviceId = t.deviceId), ee(t.userDisplayName) || (e.analytics.userDisplayName = t.userDisplayName), ee(t.documentLocation) || (e.analytics.documentLocation = t.documentLocation);
 }
-function f0(e, t) {
+function fA(e, t) {
   e.knowledge.agentId = t;
   try {
-    c0() && (e.knowledge.debugAgentSession = !0);
+    cA() && (e.knowledge.debugAgentSession = !0);
   } catch {
   }
 }
-const h0 = new Q({ required: !0 }), dh = new Q({
+const hA = new Q({ required: !0 }), dh = new Q({
   required: !0,
   constrainTo: Xf
 }), fh = (e) => ({
@@ -12957,7 +12957,7 @@ w("followUpAnswers/setFollowUpIsStreaming", (e) => R(e, {
   answerId: j
 }));
 w("followUpAnswers/followUpMessageChunkReceived", (e) => R(e, {
-  textDelta: h0,
+  textDelta: hA,
   answerId: j
 }));
 w("followUpAnswers/followUpCitationsReceived", (e) => R(e, {
@@ -13027,7 +13027,7 @@ var ut;
 })(ut || (ut = {}));
 ut.SseMaxDurationExceeded, ut.SseFollowUpNotSupported, ut.ConversationNotFound, ut.SseModelsNotAvailable, ut.SseInternalError, ut.SseTurnLimitReached;
 var yr = { exports: {} }, vs, xu;
-function p0() {
+function pA() {
   if (xu) return vs;
   xu = 1;
   function e(r) {
@@ -13102,10 +13102,10 @@ function p0() {
   return vs;
 }
 var ku;
-function g0() {
+function gA() {
   if (ku) return yr.exports;
   ku = 1;
-  const e = p0();
+  const e = pA();
   yr.exports = l;
   const t = F().console || {}, r = {
     mapHttpRequest: _,
@@ -13439,8 +13439,8 @@ function g0() {
   }
   return yr.exports;
 }
-g0();
-const m0 = {
+gA();
+const mA = {
   organizationId: j,
   accessToken: j,
   name: new Q({
@@ -13487,7 +13487,7 @@ const m0 = {
   })
 };
 new yt({
-  ...m0,
+  ...mA,
   analytics: new z({
     options: { required: !0 },
     values: {
@@ -13542,13 +13542,13 @@ const nr = {
   sortCriteria: new Ie({ required: !1 }),
   basePath: new ae({ required: !1, each: j }),
   filterByBasePath: new ie({ required: !1 })
-}, y0 = w("categoryFacet/register", (e) => R(e, nr)), v0 = w("categoryFacet/toggleSelectValue", (e) => {
+}, yA = w("categoryFacet/register", (e) => R(e, nr)), vA = w("categoryFacet/toggleSelectValue", (e) => {
   try {
     return ze(e.facetId, j), Ho(e.selection), { payload: e, error: null };
   } catch (t) {
     return { payload: e, error: it(t) };
   }
-}), S0 = w("categoryFacet/deselectAll", (e) => R(e, nr.facetId));
+}), SA = w("categoryFacet/deselectAll", (e) => R(e, nr.facetId));
 w("categoryFacet/updateNumberOfValues", (e) => R(e, {
   facetId: nr.facetId,
   numberOfValues: nr.numberOfValues
@@ -13569,7 +13569,7 @@ se(Gd(), (e) => {
   }).addCase(ot.fulfilled, (t, r) => {
     var n;
     return ((n = r.payload) == null ? void 0 : n.facetOptions) ?? t;
-  }).addCase(y0, (t, r) => {
+  }).addCase(yA, (t, r) => {
     const { facetId: n, tabs: i } = r.payload;
     Rn(i, t, n);
   }).addCase(ff, (t, r) => {
@@ -13621,7 +13621,7 @@ function Ss(e, t) {
 function io(e, t) {
   e.error = null, e.response = t.payload.response, e.queryExecuted = t.payload.queryExecuted, e.duration = t.payload.duration, e.isLoading = !1;
 }
-function w0(e, t) {
+function wA(e, t) {
   io(e, t), e.results = t.payload.response.results.map((r) => ({
     ...r,
     searchUid: t.payload.response.searchUid
@@ -13630,12 +13630,12 @@ function w0(e, t) {
 function Eu(e, t) {
   e.isLoading = !0, e.searchAction = t.meta.arg.next, e.requestId = t.meta.requestId;
 }
-function b0(e, t) {
+function bA(e, t) {
   e.isLoading = !0, e.searchAction = { actionCause: er.browseResults }, e.requestId = t.meta.requestId;
 }
 se(ht(), (e) => {
   e.addCase(Pe.rejected, (t, r) => Ss(t, r)), e.addCase(os.rejected, (t, r) => Ss(t, r)), e.addCase(Vn.rejected, (t, r) => Ss(t, r)), e.addCase(Pe.fulfilled, (t, r) => {
-    w0(t, r);
+    wA(t, r);
   }), e.addCase(os.fulfilled, (t, r) => {
     io(t, r), t.results = [
       ...t.results,
@@ -13653,7 +13653,7 @@ se(ht(), (e) => {
     ];
   }), e.addCase(rf.fulfilled, (t, r) => {
     t.response.facets = r.payload.response.facets, t.response.searchUid = r.payload.response.searchUid;
-  }), e.addCase(Pe.pending, Eu), e.addCase(os.pending, b0), e.addCase(Vn.pending, Eu), e.addCase(Sb, (t, r) => {
+  }), e.addCase(Pe.pending, Eu), e.addCase(os.pending, bA), e.addCase(Vn.pending, Eu), e.addCase(Sb, (t, r) => {
     t.searchAction = r.payload;
   }), e.addCase(Xr, (t, r) => {
     t.error = r.payload, t.isLoading = !1;
@@ -13669,7 +13669,7 @@ const mh = [
 ], vh = [
   "even",
   "equiprobable"
-], C0 = {
+], CA = {
   start: new Q(),
   end: new Q(),
   endInclusive: new ie(),
@@ -13692,7 +13692,7 @@ new yt({
   injectionDepth: lf,
   numberOfValues: $o,
   currentValues: new ae({
-    each: new z({ values: C0 })
+    each: new z({ values: CA })
   }),
   sortCriteria: new Q({ constrainTo: yh }),
   rangeAlgorithm: new Q({ constrainTo: vh })
@@ -13707,10 +13707,10 @@ ne("numericFacet/executeToggleSelect", (e, { dispatch: t, extra: { validatePaylo
 ne("numericFacet/executeToggleExclude", (e, { dispatch: t, extra: { validatePayload: r } }) => {
   r(e, Sh), t(Bo(e)), t(ph(e)), t(Wr());
 });
-const I0 = [
+const IA = [
   "allValues",
   "atLeastOneValue"
-], A0 = {
+], AA = {
   start: new G(),
   end: new G(),
   endInclusive: new ie(),
@@ -13733,10 +13733,10 @@ new yt({
   injectionDepth: lf,
   numberOfValues: $o,
   currentValues: new ae({
-    each: new z({ values: A0 })
+    each: new z({ values: AA })
   }),
   sortCriteria: new Q({ constrainTo: yh }),
-  resultsMustMatch: new Q({ constrainTo: I0 }),
+  resultsMustMatch: new Q({ constrainTo: IA }),
   rangeAlgorithm: new Q({ constrainTo: vh })
 });
 const aa = {
@@ -13744,7 +13744,7 @@ const aa = {
 }, wh = {
   ...aa,
   query: Ue
-}, x0 = w("commerce/instantProducts/clearExpired", (e) => R(e, aa)), k0 = {
+}, xA = w("commerce/instantProducts/clearExpired", (e) => R(e, aa)), kA = {
   child: new z({
     options: { required: !0 },
     values: {
@@ -13752,33 +13752,33 @@ const aa = {
     }
   }),
   ...wh
-}, E0 = w("commerce/instantProducts/promoteChildToParent", (e) => R(e, k0)), R0 = w("commerce/instantProducts/register", (e) => R(e, aa)), q0 = w("commerce/instantProducts/updateQuery", (e) => R(e, wh));
-function O0(e) {
+}, EA = w("commerce/instantProducts/promoteChildToParent", (e) => R(e, kA)), RA = w("commerce/instantProducts/register", (e) => R(e, aa)), qA = w("commerce/instantProducts/updateQuery", (e) => R(e, wh));
+function OA(e) {
   return e ? e.expiresAt && Date.now() >= e.expiresAt : !1;
 }
-const F0 = (e, t) => {
+const FA = (e, t) => {
   const { id: r } = e;
   if (!t[r])
     return t[r] = { q: "", cache: {} }, t;
-}, D0 = (e, t) => {
+}, DA = (e, t) => {
   const { q: r, id: n } = e;
   r && (t[n].q = r);
-}, T0 = (e, t) => {
+}, TA = (e, t) => {
   const { id: r } = e;
   Object.entries(t[r].cache).forEach(([n, i]) => {
-    O0(i) && delete t[r].cache[n];
+    OA(i) && delete t[r].cache[n];
   });
-}, _0 = (e, t, r) => {
+}, _A = (e, t, r) => {
   for (const i in t)
     for (const s in t[i].cache)
       t[i].cache[s].isActive = !1;
   if (!so(e, t)) {
-    U0(e, t, r);
+    UA(e, t, r);
     return;
   }
   const n = so(e, t);
   n.isLoading = !0, n.isActive = !0, n.error = null;
-}, M0 = (e, t, r) => {
+}, MA = (e, t, r) => {
   const { id: n, q: i, searchUid: s, cacheTimeout: o, totalCountFiltered: a, duration: c } = e;
   t[n].cache[i] = {
     ...so(e, t),
@@ -13791,13 +13791,13 @@ const F0 = (e, t) => {
     totalCountFiltered: a,
     duration: c
   };
-}, P0 = (e, t) => {
+}, PA = (e, t) => {
   const { id: r, q: n, error: i } = e;
   t[r].cache[n].error = i || null, t[r].cache[n].isLoading = !1, t[r].cache[n].isActive = !1;
 }, so = (e, t) => {
   const { q: r, id: n } = e;
   return t[n].cache[r] || null;
-}, U0 = (e, t, r) => {
+}, UA = (e, t, r) => {
   const { q: n, id: i } = e;
   t[i].cache[n] = {
     isLoading: !0,
@@ -13810,31 +13810,31 @@ const F0 = (e, t) => {
     ...r
   };
 };
-function $0() {
+function $A() {
   return {};
 }
-se($0(), (e) => {
-  e.addCase(R0, (t, r) => {
-    F0(r.payload, t);
-  }).addCase(q0, (t, r) => {
-    D0({ ...r.payload, q: r.payload.query }, t);
-  }).addCase(x0, (t, r) => {
-    T0(r.payload, t);
+se($A(), (e) => {
+  e.addCase(RA, (t, r) => {
+    FA(r.payload, t);
+  }).addCase(qA, (t, r) => {
+    DA({ ...r.payload, q: r.payload.query }, t);
+  }).addCase(xA, (t, r) => {
+    TA(r.payload, t);
   }).addCase(Ki.pending, (t, r) => {
-    _0(r.meta.arg, t, { products: [] });
+    _A(r.meta.arg, t, { products: [] });
   }).addCase(Ki.fulfilled, (t, r) => {
     const { response: { products: n, responseId: i, pagination: { totalEntries: s } } } = r.payload;
-    M0({
+    MA({
       duration: 0,
       searchUid: i,
       totalCountFiltered: s,
       ...r.meta.arg
     }, t, {
-      products: n.map((o, a) => V0(o, a + 1, i))
+      products: n.map((o, a) => VA(o, a + 1, i))
     });
   }).addCase(Ki.rejected, (t, r) => {
-    P0(r.meta.arg, t);
-  }).addCase(E0, (t, r) => {
+    PA(r.meta.arg, t);
+  }).addCase(EA, (t, r) => {
     const n = t[r.payload.id].cache[r.payload.query];
     if (!n)
       return;
@@ -13854,7 +13854,7 @@ se($0(), (e) => {
     p.splice(o, 1, d), n.products = p;
   });
 });
-function V0(e, t, r) {
+function VA(e, t, r) {
   const n = e.children.some((a) => a.permanentid === e.permanentid);
   if (e.children.length === 0 || n)
     return { ...e, position: t, responseId: r };
@@ -13874,14 +13874,14 @@ ne("commerce/product/click", async (e, { extra: t, getState: r }) => {
   const { relay: n } = t, s = { currency: mi(r().commerceContext), ...e };
   n.emit("ec.productClick", s);
 });
-const L0 = {
+const LA = {
   placementIds: new ae({
     required: !1,
     min: 1,
     each: j
   }),
   productId: ve
-}, Q0 = w("commerce/productEnrichment/registerOptions"), j0 = (e, t, r) => {
+}, QA = w("commerce/productEnrichment/registerOptions"), jA = (e, t, r) => {
   const n = Hr(t, r);
   return {
     ...n,
@@ -13892,13 +13892,13 @@ const L0 = {
     placementIds: e.placementIds
   };
 }, ws = ne("commerce/productEnrichment/fetchBadges", async (e, { getState: t, rejectWithValue: r, extra: { apiClient: n, navigatorContext: i } }) => {
-  R(e, L0);
-  const s = j0(e, t(), i), o = await n.getBadges(s);
+  R(e, LA);
+  const s = jA(e, t(), i), o = await n.getBadges(s);
   return "error" in o ? r(o.error) : {
     response: o.success
   };
 });
-function N0() {
+function NA() {
   return {
     products: [],
     isLoading: !1,
@@ -13907,21 +13907,21 @@ function N0() {
     placementIds: []
   };
 }
-se(N0(), (e) => {
-  e.addCase(Q0, (t, r) => {
+se(NA(), (e) => {
+  e.addCase(QA, (t, r) => {
     t.productId = r.payload.productId, t.placementIds = r.payload.placementIds ?? [];
   }).addCase(ws.pending, (t) => {
     t.isLoading = !0, t.error = null;
   }).addCase(ws.fulfilled, (t, r) => {
-    B0(t), t.products = r.payload.response.products;
+    BA(t), t.products = r.payload.response.products;
   }).addCase(ws.rejected, (t, r) => {
-    z0(t, r.payload);
+    zA(t, r.payload);
   });
 });
-function z0(e, t) {
+function zA(e, t) {
   e.error = t || null, e.isLoading = !1, e.products = [];
 }
-function B0(e) {
+function BA(e) {
   e.error = null, e.isLoading = !1;
 }
 ne("commerce/spotlight-content/click", async (e, { extra: t }) => {
@@ -13940,9 +13940,9 @@ function Ru() {
   return {};
 }
 se(Ru(), (e) => {
-  e.addCase(Bl, (t, r) => H0(t, r.payload)).addCase(Hl, (t, r) => Y0(t, r.payload)).addCase(wo, (t, r) => W0(t, r.payload)).addCase(zl, (t, r) => G0(t, r.payload)).addCase(ta, (t, r) => K0(t, r.payload)).addCase(bi, (t, r) => J0(t, r.payload)).addCase(vi, (t) => qu(t)).addCase(So, (t) => qu(t)).addCase(Si, (t, r) => Z0(t, r.payload)).addCase(Yo, (t, r) => X0(t, r.payload)).addCase(Co, (t, r) => eA(t, r)).addCase(Xo, (t, r) => tA(t, r.payload)).addCase(Zo, (t, r) => nA(t, r.payload)).addCase(xi, (t, r) => rA(t, r)).addCase(ki, (t, r) => iA(t, r)).addCase(Fi, (t, r) => sA(t, r.payload)).addCase(Di, (t, r) => oA(t, r.payload)).addCase(Jo, (t, r) => aA(t, r.payload)).addCase(Wo, (t, r) => cA(t, r.payload)).addCase(Go, (t, r) => uA(t, r.payload)).addCase(Ko, (t, r) => lA(t, r.payload)).addCase(st, Ru).addCase(or, (t, r) => (t = r.payload, t)).addCase(vt, (t, r) => (t = r.payload, t));
+  e.addCase(Bl, (t, r) => HA(t, r.payload)).addCase(Hl, (t, r) => YA(t, r.payload)).addCase(wo, (t, r) => WA(t, r.payload)).addCase(zl, (t, r) => GA(t, r.payload)).addCase(ta, (t, r) => KA(t, r.payload)).addCase(bi, (t, r) => JA(t, r.payload)).addCase(vi, (t) => qu(t)).addCase(So, (t) => qu(t)).addCase(Si, (t, r) => ZA(t, r.payload)).addCase(Yo, (t, r) => XA(t, r.payload)).addCase(Co, (t, r) => e0(t, r)).addCase(Xo, (t, r) => t0(t, r.payload)).addCase(Zo, (t, r) => n0(t, r.payload)).addCase(xi, (t, r) => r0(t, r)).addCase(ki, (t, r) => i0(t, r)).addCase(Fi, (t, r) => s0(t, r.payload)).addCase(Di, (t, r) => o0(t, r.payload)).addCase(Jo, (t, r) => a0(t, r.payload)).addCase(Wo, (t, r) => c0(t, r.payload)).addCase(Go, (t, r) => u0(t, r.payload)).addCase(Ko, (t, r) => l0(t, r.payload)).addCase(st, Ru).addCase(or, (t, r) => (t = r.payload, t)).addCase(vt, (t, r) => (t = r.payload, t));
 });
-const H0 = (e, t) => {
+const HA = (e, t) => {
   if ((t == null ? void 0 : t.slotId) === void 0) {
     if (e.page !== void 0) {
       e.page++;
@@ -13950,7 +13950,7 @@ const H0 = (e, t) => {
     }
     e.page = 1;
   }
-}, Y0 = (e, t) => {
+}, YA = (e, t) => {
   if ((t == null ? void 0 : t.slotId) === void 0) {
     if (e.page !== void 0 && e.page > 1) {
       e.page--;
@@ -13958,9 +13958,9 @@ const H0 = (e, t) => {
     }
     e.page = void 0;
   }
-}, W0 = (e, t) => {
+}, WA = (e, t) => {
   (t == null ? void 0 : t.slotId) === void 0 && (e.page = t.page > 0 ? t.page : void 0);
-}, G0 = (e, t) => {
+}, GA = (e, t) => {
   if ((t == null ? void 0 : t.slotId) === void 0) {
     if (e.page = void 0, t.pageSize === 0) {
       e.perPage = void 0;
@@ -13968,9 +13968,9 @@ const H0 = (e, t) => {
     }
     e.perPage = t.pageSize;
   }
-}, K0 = (e, t) => {
+}, KA = (e, t) => {
   e.page = void 0, e.sortCriteria = t;
-}, J0 = (e, t) => {
+}, JA = (e, t) => {
   e.page = void 0;
   const { query: r } = t;
   if (r === void 0 || r.trim() === "") {
@@ -13980,19 +13980,19 @@ const H0 = (e, t) => {
   e.q = r;
 }, qu = (e) => {
   e.page = void 0, e.cf = void 0, e.df = void 0, e.dfExcluded = void 0, e.lf = void 0, e.mnf = void 0, e.mnfExcluded = void 0, e.nf = void 0, e.nfExcluded = void 0, e.f = void 0, e.fExcluded = void 0;
-}, Z0 = (e, t) => {
+}, ZA = (e, t) => {
   const { facetId: r } = t;
   e.page = void 0, e.cf && (delete e.cf[r], Object.keys(e.cf).length === 0 && delete e.cf), e.df && (delete e.df[r], Object.keys(e.df).length === 0 && delete e.df), e.dfExcluded && (delete e.dfExcluded[r], Object.keys(e.dfExcluded).length === 0 && delete e.dfExcluded), e.lf && (delete e.lf[r], Object.keys(e.lf).length === 0 && delete e.lf), e.mnf && (delete e.mnf[r], Object.keys(e.mnf).length === 0 && delete e.mnf), e.mnfExcluded && (delete e.mnfExcluded[r], Object.keys(e.mnfExcluded).length === 0 && delete e.mnfExcluded), e.nf && (delete e.nf[r], Object.keys(e.nf).length === 0 && delete e.nf), e.nfExcluded && (delete e.nfExcluded[r], Object.keys(e.nfExcluded).length === 0 && delete e.nfExcluded), e.f && (delete e.f[r], Object.keys(e.f).length === 0 && delete e.f), e.fExcluded && (delete e.fExcluded[r], Object.keys(e.fExcluded).length === 0 && delete e.fExcluded);
-}, X0 = (e, t) => {
+}, XA = (e, t) => {
   if (e.page = void 0, t.selection.state === "selected") {
     e.cf ?? (e.cf = {}), delete e.cf[t.facetId], Object.keys(e.cf).length === 0 && (e.cf = void 0);
     return;
   }
   e.cf ?? (e.cf = {}), e.cf[t.facetId] = t.selection.path;
-}, eA = (e, t) => {
+}, e0 = (e, t) => {
   const r = t.payload;
   e.page = void 0, e.cf ?? (e.cf = {}), e.cf[r.facetId] = [...r.value.path, r.value.rawValue];
-}, tA = (e, t) => {
+}, t0 = (e, t) => {
   switch (e.page = void 0, Mt(e, "fExcluded", e.fExcluded, t.facetId, t.selection.value), t.selection.state) {
     case "selected":
       Mt(e, "f", e.f, t.facetId, t.selection.value);
@@ -14005,13 +14005,13 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, rA = (e, t) => {
+}, r0 = (e, t) => {
   const r = t.payload;
   e.page = void 0, Mt(e, "fExcluded", e.fExcluded, r.facetId, r.value.rawValue), e.f ?? (e.f = {}), e.f[r.facetId] = [
     ...e.f[r.facetId] ?? [],
     r.value.rawValue
   ];
-}, nA = (e, t) => {
+}, n0 = (e, t) => {
   switch (e.page = void 0, Mt(e, "f", e.f, t.facetId, t.selection.value), t.selection.state) {
     case "excluded":
       Mt(e, "fExcluded", e.fExcluded, t.facetId, t.selection.value);
@@ -14024,13 +14024,13 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, iA = (e, t) => {
+}, i0 = (e, t) => {
   const r = t.payload;
   e.page = void 0, Mt(e, "f", e.f, r.facetId, r.value.rawValue), e.fExcluded ?? (e.fExcluded = {}), e.fExcluded[r.facetId] = [
     ...e.fExcluded[r.facetId] ?? [],
     r.value.rawValue
   ];
-}, sA = (e, t) => {
+}, s0 = (e, t) => {
   switch (e.page = void 0, ye(e, "mnf", e.mnf, t.facetId, t.selection), ye(e, "mnfExcluded", e.mnfExcluded, t.facetId, t.selection), ye(e, "nfExcluded", e.nfExcluded, t.facetId, t.selection), t.selection.state) {
     case "selected":
       ye(e, "nf", e.nf, t.facetId, t.selection);
@@ -14043,7 +14043,7 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, oA = (e, t) => {
+}, o0 = (e, t) => {
   switch (e.page = void 0, ye(e, "mnf", e.mnf, t.facetId, t.selection), ye(e, "mnfExcluded", e.mnfExcluded, t.facetId, t.selection), ye(e, "nf", e.nf, t.facetId, t.selection), t.selection.state) {
     case "excluded":
       ye(e, "nfExcluded", e.nfExcluded, t.facetId, t.selection);
@@ -14056,7 +14056,7 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, aA = (e, t) => {
+}, a0 = (e, t) => {
   e.page = void 0, ye(e, "nf", e.nf, t.facetId, t), ye(e, "nfExcluded", e.nfExcluded, t.facetId, t);
   const { facetId: r, ...n } = t;
   switch (t.state) {
@@ -14070,7 +14070,7 @@ const H0 = (e, t) => {
       ye(e, "mnfExcluded", e.mnfExcluded, t.facetId, t), e.mnf ?? (e.mnf = {}), e.mnf[t.facetId] = [n];
       break;
   }
-}, cA = (e, t) => {
+}, c0 = (e, t) => {
   e.page = void 0, ye(e, "dfExcluded", e.dfExcluded, t.facetId, t.selection);
   const { numberOfResults: r, ...n } = t.selection;
   switch (t.selection.state) {
@@ -14085,7 +14085,7 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, uA = (e, t) => {
+}, u0 = (e, t) => {
   e.page = void 0, ye(e, "df", e.df, t.facetId, t.selection);
   const { numberOfResults: r, ...n } = t.selection;
   switch (t.selection.state) {
@@ -14100,7 +14100,7 @@ const H0 = (e, t) => {
       ];
       break;
   }
-}, lA = (e, t) => {
+}, l0 = (e, t) => {
   switch (e.page = void 0, t.selection.state) {
     case "selected":
       Mt(e, "lf", e.lf, t.facetId, t.selection.value);
@@ -14120,23 +14120,23 @@ const H0 = (e, t) => {
     const s = r[n].filter((o) => o.start !== i.start || o.end !== i.end || o.endInclusive !== i.endInclusive);
     r[n] = s, r[n].length === 0 && delete r[n], Object.keys(r).length === 0 && (e[t] = void 0);
   }
-}, dA = new G({
+}, d0 = new G({
   min: Wv,
   default: gd,
   required: !1
-}), fA = new G({
+}), f0 = new G({
   min: Hv,
   max: Yv,
   default: pd,
   required: !1
-}), hA = {
-  desiredCount: fA,
-  numberOfValues: dA
+}), h0 = {
+  desiredCount: f0,
+  numberOfValues: d0
 };
-w("automaticFacet/setOptions", (e) => R(e, hA));
+w("automaticFacet/setOptions", (e) => R(e, h0));
 w("automaticFacet/deselectAll", (e) => R(e, ue));
-const pA = j, gA = w("automaticFacet/toggleSelectValue", (e) => R(e, {
-  field: pA,
+const p0 = j, g0 = w("automaticFacet/toggleSelectValue", (e) => R(e, {
+  field: p0,
   selection: new z({ values: lr })
 }));
 se(_o(), (e) => {
@@ -14157,7 +14157,7 @@ se(_o(), (e) => {
     const r = bs(t), n = Math.max(r - 1, iy);
     t.firstResult = vr(n, t.numberOfResults);
   }).addCase(rb, (t) => {
-    const r = bs(t), n = mA(t), i = Math.min(r + 1, n);
+    const r = bs(t), n = m0(t), i = Math.min(r + 1, n);
     t.firstResult = vr(i, t.numberOfResults);
   }).addCase(ot.fulfilled, (t, r) => {
     r.payload && (t.numberOfResults = r.payload.pagination.numberOfResults, t.firstResult = r.payload.pagination.firstResult);
@@ -14181,9 +14181,9 @@ se(_o(), (e) => {
     xe(t);
   }).addCase(hf, (t) => {
     xe(t);
-  }).addCase(S0, (t) => {
+  }).addCase(SA, (t) => {
     xe(t);
-  }).addCase(v0, (t) => {
+  }).addCase(vA, (t) => {
     xe(t);
   }).addCase(Co, (t) => {
     xe(t);
@@ -14199,7 +14199,7 @@ se(_o(), (e) => {
     xe(t);
   }).addCase(xi, (t) => {
     xe(t);
-  }).addCase(gA, (t) => {
+  }).addCase(g0, (t) => {
     xe(t);
   });
 });
@@ -14208,19 +14208,19 @@ function xe(e) {
 }
 function bs(e) {
   const { firstResult: t, numberOfResults: r } = e;
-  return yA(t, r);
+  return y0(t, r);
 }
-function mA(e) {
+function m0(e) {
   const { totalCountFiltered: t, numberOfResults: r } = e;
-  return vA(t, r);
+  return v0(t, r);
 }
 function vr(e, t) {
   return (e - 1) * t;
 }
-function yA(e, t) {
+function y0(e, t) {
   return Math.round(e / t) + 1;
 }
-function vA(e, t) {
+function v0(e, t) {
   const r = Math.min(e, _r);
   return Math.ceil(r / t);
 }
@@ -14244,7 +14244,7 @@ const bh = {
     each: new Q({ emptyAllowed: !1 })
   }),
   maxLength: new G({ required: !0, min: 1, default: 10 })
-}, SA = w("recentQueries/registerRecentQueries", (e) => R(e, bh)), wA = w("recentQueries/clearRecentQueries"), bA = w("commerce/recentQueries/clear"), CA = w("commerce/recentQueries/register", (e) => R(e, bh));
+}, S0 = w("recentQueries/registerRecentQueries", (e) => R(e, bh)), w0 = w("recentQueries/clearRecentQueries"), b0 = w("commerce/recentQueries/clear"), C0 = w("commerce/recentQueries/register", (e) => R(e, bh));
 function Ch() {
   return {
     queries: [],
@@ -14252,7 +14252,7 @@ function Ch() {
   };
 }
 se(Ch(), (e) => {
-  e.addCase(SA, Ih).addCase(wA, Ah).addCase(Pe.fulfilled, (t, r) => {
+  e.addCase(S0, Ih).addCase(w0, Ah).addCase(Pe.fulfilled, (t, r) => {
     const n = r.payload.queryExecuted, i = r.payload.response.results;
     !n.length || !i.length || xh(n, t);
   });
@@ -14271,7 +14271,7 @@ function xh(e, t) {
   t.queries = [r, ...n];
 }
 se(Ch(), (e) => {
-  e.addCase(CA, Ih).addCase(bA, Ah).addCase(Re.fulfilled, (t, r) => {
+  e.addCase(C0, Ih).addCase(b0, Ah).addCase(Re.fulfilled, (t, r) => {
     const n = r.payload.queryExecuted, i = r.payload.response.products;
     !n.length || !i.length || xh(n, t);
   });
@@ -14279,9 +14279,9 @@ se(Ch(), (e) => {
 const $i = {
   id: j,
   query: Ue
-}, IA = w("querySet/register", (e) => R(e, $i)), AA = w("querySet/update", (e) => R(e, $i)), xA = w("commerce/querySet/register", (e) => R(e, $i)), kA = w("commerce/querySet/update", (e) => R(e, $i));
+}, I0 = w("querySet/register", (e) => R(e, $i)), A0 = w("querySet/update", (e) => R(e, $i)), x0 = w("commerce/querySet/register", (e) => R(e, $i)), k0 = w("commerce/querySet/update", (e) => R(e, $i));
 se(Mo(), (e) => {
-  e.addCase(xA, (t, r) => RA(t, r.payload)).addCase(kA, (t, r) => {
+  e.addCase(x0, (t, r) => R0(t, r.payload)).addCase(k0, (t, r) => {
     const { id: n, query: i } = r.payload;
     Ou(t, n, i);
   }).addCase(Md, (t, r) => {
@@ -14290,9 +14290,9 @@ se(Mo(), (e) => {
   }).addCase(Re.fulfilled, (t, r) => {
     const { queryExecuted: n } = r.payload;
     kh(t, n);
-  }).addCase(vt, EA);
+  }).addCase(vt, E0);
 });
-function EA(e, t) {
+function E0(e, t) {
   ee(t.payload.q) || kh(e, t.payload.q);
 }
 function kh(e, t) {
@@ -14302,13 +14302,13 @@ function kh(e, t) {
 }
 const Ou = (e, t, r) => {
   t in e && (e[t] = r);
-}, RA = (e, t) => {
+}, R0 = (e, t) => {
   const { id: r, query: n } = t;
   r in e || (e[r] = n);
 };
 function Eh(e, t) {
   const r = t.id;
-  r in e || (e[r] = qA(t));
+  r in e || (e[r] = q0(t));
 }
 function Rh(e, t) {
   const r = e[t.meta.arg.id];
@@ -14322,7 +14322,7 @@ function Oh(e, t) {
   const r = e[t.id];
   r && (r.responseId = "", r.completions = [], r.partialQueries = []);
 }
-function qA(e) {
+function q0(e) {
   return {
     id: "",
     completions: [],
@@ -14354,21 +14354,21 @@ se(Fh(), (e) => e.addCase(YS, (t, r) => {
 }));
 const tn = {
   id: j
-}, OA = w("querySuggest/register", (e) => R(e, {
+}, O0 = w("querySuggest/register", (e) => R(e, {
   ...tn,
   count: new G({ min: 0 })
-})), FA = w("querySuggest/unregister", (e) => R(e, tn)), Dh = w("querySuggest/selectSuggestion", (e) => R(e, {
+})), F0 = w("querySuggest/unregister", (e) => R(e, tn)), Dh = w("querySuggest/selectSuggestion", (e) => R(e, {
   ...tn,
   expression: Ue
-})), DA = w("querySuggest/clear", (e) => R(e, tn)), Cs = ne("querySuggest/fetch", async (e, { getState: t, rejectWithValue: r, extra: { apiClient: n, validatePayload: i, navigatorContext: s } }) => {
+})), D0 = w("querySuggest/clear", (e) => R(e, tn)), Cs = ne("querySuggest/fetch", async (e, { getState: t, rejectWithValue: r, extra: { apiClient: n, validatePayload: i, navigatorContext: s } }) => {
   i(e, tn);
-  const o = e.id, a = await TA(o, t(), s), c = await n.querySuggest(a);
+  const o = e.id, a = await T0(o, t(), s), c = await n.querySuggest(a);
   return pt(c) ? r(c.error) : {
     id: o,
     q: a.q,
     ...c.success
   };
-}), TA = async (e, t, r) => ({
+}), T0 = async (e, t, r) => ({
   accessToken: t.configuration.accessToken,
   organizationId: t.configuration.organizationId,
   url: t.configuration.search.apiBaseUrl ?? sr(t.configuration.organizationId, t.configuration.environment),
@@ -14399,7 +14399,7 @@ se(ur(), (e) => e.addCase(qi, (t, r) => ({ ...t, ...r.payload })).addCase(To, (t
   t.q = r.payload.q ?? t.q, t.enableQuerySyntax = r.payload.enableQuerySyntax ?? t.enableQuerySyntax;
 }));
 se(Mo(), (e) => {
-  e.addCase(IA, (t, r) => MA(t, r.payload)).addCase(AA, (t, r) => {
+  e.addCase(I0, (t, r) => M0(t, r.payload)).addCase(A0, (t, r) => {
     const { id: n, query: i } = r.payload;
     Is(t, n, i);
   }).addCase(Dh, (t, r) => {
@@ -14408,13 +14408,13 @@ se(Mo(), (e) => {
   }).addCase(Pe.fulfilled, (t, r) => {
     const { queryExecuted: n } = r.payload;
     Th(t, n);
-  }).addCase(wt, _A).addCase(ot.fulfilled, (t, r) => {
+  }).addCase(wt, _0).addCase(ot.fulfilled, (t, r) => {
     if (r.payload)
       for (const [n, i] of Object.entries(r.payload.querySet))
         Is(t, n, i);
   });
 });
-function _A(e, t) {
+function _0(e, t) {
   ee(t.payload.q) || Th(e, t.payload.q);
 }
 function Th(e, t) {
@@ -14424,13 +14424,13 @@ function Th(e, t) {
 }
 const Is = (e, t, r) => {
   t in e && (e[t] = r);
-}, MA = (e, t) => {
+}, M0 = (e, t) => {
   const { id: r, query: n } = t;
   r in e || (e[r] = n);
 };
-se(Fh(), (e) => e.addCase(OA, (t, r) => {
+se(Fh(), (e) => e.addCase(O0, (t, r) => {
   Eh(t, r.payload);
-}).addCase(FA, (t, r) => {
+}).addCase(F0, (t, r) => {
   delete t[r.payload.id];
 }).addCase(Cs.pending, Rh).addCase(Cs.fulfilled, (t, r) => {
   const n = t[r.meta.arg.id];
@@ -14438,7 +14438,7 @@ se(Fh(), (e) => e.addCase(OA, (t, r) => {
     return;
   const { q: i } = r.payload;
   i && n.partialQueries.push(i.replace(/;/, encodeURIComponent(";"))), n.responseId = r.payload.responseId, n.completions = r.payload.completions, n.isLoading = !1, n.error = null;
-}).addCase(Cs.rejected, qh).addCase(DA, (t, r) => {
+}).addCase(Cs.rejected, qh).addCase(D0, (t, r) => {
   Oh(t, r.payload);
 }).addCase(Xr, (t, r) => {
   Object.keys(t).forEach((n) => {
@@ -14449,7 +14449,7 @@ se(Fh(), (e) => e.addCase(OA, (t, r) => {
 const As = {
   open: new Q(),
   close: new Q()
-}, PA = {
+}, P0 = {
   id: j,
   highlightOptions: new z({
     values: {
@@ -14465,12 +14465,12 @@ const As = {
     }
   }),
   clearFilters: new ie()
-}, { id: UA, highlightOptions: $A, clearFilters: VA } = PA, LA = {
-  id: UA,
-  highlightOptions: $A,
-  clearFilters: VA,
+}, { id: U0, highlightOptions: $0, clearFilters: V0 } = P0, L0 = {
+  id: U0,
+  highlightOptions: $0,
+  clearFilters: V0,
   enableResults: new ie()
-}, QA = (e, t) => {
+}, Q0 = (e, t) => {
   const r = Hr(e, t);
   return {
     ...r,
@@ -14482,28 +14482,28 @@ const As = {
   };
 }, xs = ne("commerce/standaloneSearchBox/fetchRedirect", async (e, { getState: t, rejectWithValue: r, extra: { apiClient: n, navigatorContext: i } }) => {
   R(e, { id: new Q({ emptyAllowed: !1 }) });
-  const s = t(), o = QA(s, i), a = await n.plan(o);
+  const s = t(), o = Q0(s, i), a = await n.plan(o);
   return je(a) ? r(a.error) : a.success.redirect || "";
-}), jA = w("commerce/standaloneSearchBox/register", (e) => R(e, {
+}), j0 = w("commerce/standaloneSearchBox/register", (e) => R(e, {
   id: j,
   redirectionUrl: j,
   overwrite: new ie({ required: !1 })
-})), NA = w("commerce/standaloneSearchBox/updateRedirectionUrl", (e) => R(e, {
+})), N0 = w("commerce/standaloneSearchBox/updateRedirectionUrl", (e) => R(e, {
   id: j,
   redirectionUrl: j
-})), zA = w("commerce/standaloneSearchBox/reset", (e) => R(e, {
+})), z0 = w("commerce/standaloneSearchBox/reset", (e) => R(e, {
   id: j
 }));
-function BA() {
+function B0() {
   return {};
 }
-se(BA(), (e) => e.addCase(jA, (t, r) => {
+se(B0(), (e) => e.addCase(j0, (t, r) => {
   const { id: n, redirectionUrl: i, overwrite: s } = r.payload;
   !s && n in t || (t[n] = Fu(i));
-}).addCase(NA, (t, r) => {
+}).addCase(N0, (t, r) => {
   const { id: n, redirectionUrl: i } = r.payload, s = t[n];
   s && (s.defaultRedirectionUrl = i);
-}).addCase(zA, (t, r) => {
+}).addCase(z0, (t, r) => {
   const { id: n } = r.payload, i = t[n];
   if (i) {
     t[n] = Fu(i.defaultRedirectionUrl);
@@ -14527,7 +14527,7 @@ function Fu(e) {
   };
 }
 new yt({
-  ...LA,
+  ...L0,
   redirectionUrl: new Q({
     required: !0,
     emptyAllowed: !1
@@ -14539,10 +14539,10 @@ new yt({
 const Vi = (e, t) => {
   const r = e;
   return ee(r[t]) ? ee(e.additionalFields[t]) ? null : e.additionalFields[t] : r[t];
-}, HA = (e) => (t) => e.every((r) => !ee(Vi(t, r))), YA = (e) => (t) => e.every((r) => ee(Vi(t, r))), WA = (e, t) => (r) => {
+}, H0 = (e) => (t) => e.every((r) => !ee(Vi(t, r))), Y0 = (e) => (t) => e.every((r) => ee(Vi(t, r))), W0 = (e, t) => (r) => {
   const n = _h(e, r);
   return t.some((i) => n.some((s) => `${s}`.toLowerCase() === i.toLowerCase()));
-}, GA = (e, t) => (r) => {
+}, G0 = (e, t) => (r) => {
   const n = _h(e, r);
   return t.every((i) => n.every((s) => `${s}`.toLowerCase() !== i.toLowerCase()));
 }, _h = (e, t) => {
@@ -14550,15 +14550,15 @@ const Vi = (e, t) => {
   return nl(r) ? r : [r];
 }, ca = {
   getProductProperty: Vi,
-  fieldsMustBeDefined: HA,
-  fieldsMustNotBeDefined: YA,
-  fieldMustMatch: WA,
-  fieldMustNotMatch: GA
+  fieldsMustBeDefined: H0,
+  fieldsMustNotBeDefined: Y0,
+  fieldMustMatch: W0,
+  fieldMustNotMatch: G0
 };
-function KA(e) {
+function K0(e) {
   return e.type === "redirect";
 }
-class JA {
+class J0 {
   constructor(t) {
     H(this, "response");
     this.response = t;
@@ -14581,15 +14581,15 @@ class JA {
    * Returns `null` otherwise.
    */
   get redirectionUrl() {
-    const t = this.response.preprocessingOutput.triggers.filter(KA);
+    const t = this.response.preprocessingOutput.triggers.filter(K0);
     return t.length ? t[0].content : null;
   }
 }
-const ZA = w("standaloneSearchBox/register", (e) => R(e, {
+const Z0 = w("standaloneSearchBox/register", (e) => R(e, {
   id: j,
   redirectionUrl: j,
   overwrite: new ie({ required: !1 })
-})), XA = w("standaloneSearchBox/updateRedirectionUrl", (e) => R(e, {
+})), X0 = w("standaloneSearchBox/updateRedirectionUrl", (e) => R(e, {
   id: j,
   redirectionUrl: j
 })), ex = w("standaloneSearchBox/reset", (e) => R(e, {
@@ -14599,7 +14599,7 @@ const ZA = w("standaloneSearchBox/register", (e) => R(e, {
   const a = await ix(r(), o), c = await i.plan(a);
   if (pt(c))
     return n(c.error);
-  const { redirectionUrl: u } = new JA(c.success);
+  const { redirectionUrl: u } = new J0(c.success);
   return u && t(nx(u)), u || "";
 }), nx = (e) => St("analytics/standaloneSearchBox/redirect", (t) => t.makeTriggerRedirect({ redirectedTo: e })), ix = async (e, t) => ({
   accessToken: e.configuration.accessToken,
@@ -14622,7 +14622,7 @@ const ZA = w("standaloneSearchBox/register", (e) => R(e, {
 function sx() {
   return {};
 }
-se(sx(), (e) => e.addCase(ZA, (t, r) => {
+se(sx(), (e) => e.addCase(Z0, (t, r) => {
   const { id: n, redirectionUrl: i, overwrite: s } = r.payload;
   !s && n in t || (t[n] = Es(i));
 }).addCase(ex, (t, r) => {
@@ -14631,7 +14631,7 @@ se(sx(), (e) => e.addCase(ZA, (t, r) => {
     t[n] = Es(i.defaultRedirectionUrl);
     return;
   }
-}).addCase(XA, (t, r) => {
+}).addCase(X0, (t, r) => {
   const { id: n, redirectionUrl: i } = r.payload;
   n in t && (t[n] = Es(i));
 }).addCase(ks.pending, (t, r) => {
@@ -15507,11 +15507,11 @@ class Mx extends HTMLElement {
     const c = document.createElement("img");
     if (c.src = n, c.alt = s, c.loading = "lazy", c.setAttribute("aria-label", r.length > 1 ? `${s}, image ${this.activeImageIndex + 1} of ${r.length}` : s), a.append(c), o.append(a), r.length > 1) {
       const d = document.createElement("button");
-      d.type = "button", d.className = "carousel-control carousel-previous", d.dataset.action = "previous-image", d.setAttribute("aria-label", "Show previous product image"), d.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10 3-5 5 5 5" /></svg>', d.addEventListener("click", (f) => {
+      d.type = "button", d.className = "carousel-control carousel-previous", d.dataset.action = "previous-image", d.setAttribute("aria-label", "Show previous product image"), d.textContent = "‹", d.addEventListener("click", (f) => {
         f.preventDefault(), f.stopPropagation(), this.selectImage(this.activeImageIndex - 1, "previous-image");
       });
       const p = document.createElement("button");
-      p.type = "button", p.className = "carousel-control carousel-next", p.dataset.action = "next-image", p.setAttribute("aria-label", "Show next product image"), p.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>', p.addEventListener("click", (f) => {
+      p.type = "button", p.className = "carousel-control carousel-next", p.dataset.action = "next-image", p.setAttribute("aria-label", "Show next product image"), p.textContent = "›", p.addEventListener("click", (f) => {
         f.preventDefault(), f.stopPropagation(), this.selectImage(this.activeImageIndex + 1, "next-image");
       });
       const g = document.createElement("div");
@@ -15531,8 +15531,7 @@ class Mx extends HTMLElement {
       .gallery:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
       a { display: block; inline-size: 100%; block-size: 100%; }
       img { display: block; inline-size: 100%; block-size: 100%; object-fit: var(--demo-sibling-image-fit, cover); object-position: center; }
-      .carousel-control { appearance: none; display: grid; position: absolute; inset-block-start: 50%; z-index: 1; inline-size: 2.25rem; block-size: 2.25rem; place-items: center; border: 1px solid rgb(17 24 39 / 18%); border-radius: 999px; background: rgb(255 255 255 / 92%); color: #111827; cursor: pointer; opacity: 0; transform: translateY(-50%); transition: opacity 120ms ease, background 120ms ease, transform 120ms ease; }
-      .carousel-control svg { inline-size: 1.1rem; block-size: 1.1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
+      .carousel-control { appearance: none; display: grid; position: absolute; inset-block-start: 50%; z-index: 1; inline-size: 2.25rem; block-size: 2.25rem; place-items: center; border: 1px solid rgb(17 24 39 / 18%); border-radius: 999px; background: rgb(255 255 255 / 92%); color: #111827; cursor: pointer; font-size: 1.35rem; line-height: 1; opacity: 0; transform: translateY(-50%); transition: opacity 120ms ease, background 120ms ease, transform 120ms ease; }
       .carousel-previous { inset-inline-start: .5rem; }
       .carousel-next { inset-inline-end: .5rem; }
       .gallery:hover .carousel-control, .carousel-control:focus-visible { opacity: 1; }
