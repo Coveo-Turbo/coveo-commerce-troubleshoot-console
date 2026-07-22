@@ -15889,13 +15889,13 @@ class Bx extends HTMLElement {
     this.shadow.innerHTML = `
       <style>
         :host { display: block; }
-        .swatches { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-height: 1.25rem; }
-        .swatch { inline-size: 1rem; block-size: 1rem; border-radius: 999px; border: 1px solid #d1d5db; background: var(--swatch-color); padding: 0; cursor: pointer; transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease; }
+        .swatches { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-height: 2rem; }
+        .swatch { inline-size: 2rem; block-size: 2rem; border-radius: .4rem; border: 1px solid #d1d5db; background: var(--swatch-color); padding: 0; cursor: pointer; transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease, outline-color 120ms ease; }
         .swatch:hover { transform: translateY(-1px); }
-        .swatch:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
-        .swatch-active { border-color: #111827; box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px #111827; }
-        .count-button { appearance: none; border: 0; background: transparent; color: #374151; padding: 0; cursor: pointer; font-size: .875rem; font-weight: 600; line-height: 1; }
-        .count-button:hover, .count-button:focus-visible { color: #111827; }
+        .swatch:focus-visible { outline: 2px solid #0d6efd; outline-offset: 2px; }
+        .swatch-active { border-color: #0d6efd; outline: 2px solid #0d6efd; outline-offset: 1px; }
+        .count-button { appearance: none; border: 0; background: transparent; color: #374151; padding: 0; cursor: pointer; font-size: .9rem; font-weight: 600; line-height: 1; }
+        .count-button:hover, .count-button:focus-visible { color: #0d6efd; }
       </style>
       <div class="swatches" aria-label="Available colors" role="list">
         ${r.map((i) => {

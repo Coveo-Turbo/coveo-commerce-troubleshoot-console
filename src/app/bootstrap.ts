@@ -97,12 +97,12 @@ function getStateDefaults(
     selectedListingId: '',
     selectedContextPresetId: 'default',
     selectedProductTemplatePresetId: selectedProductTemplatePreset?.id ?? 'default',
-    isTopPanelMinimized: false,
+    isTopPanelMinimized: true,
     isSessionPanelMinimized: true,
     productListOptions: {
       display: 'grid',
       density: 'compact',
-      imageSize: 'small',
+      imageSize: 'large',
       instantProductsImageSize: 'small',
     },
     productTemplates: {

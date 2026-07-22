@@ -1,83 +1,121 @@
 <section class="troubleshoot-root" aria-live="polite">
-  <section class="tc-hero">
-    <p class="tc-hero__kicker">Atomic Commerce v3</p>
-    <h1 class="tc-hero__title">Commerce Troubleshoot Console</h1>
-    <p class="tc-hero__subtitle">Switch tracking ID, locale, mode, and payload context with live requests.</p>
-  </section>
+  <nav class="tc-nav">
+    <span class="tc-nav__brand">
+      <span class="tc-nav__logo" aria-hidden="true">C</span>
+      Commerce Console
+    </span>
 
-  <header class="tc-panel" data-role="top-panel">
-    <div class="tc-panel__header">
-      <button
-        type="button"
-        data-action="toggle-panel"
-        class="icon-button"
-        aria-expanded="true"
-        title="Minimize controls"
-      >
-        <span aria-hidden="true">▾</span>
+    <div class="tc-nav__links">
+      <button type="button" class="tc-nav__link mode-button active" data-mode="search" aria-pressed="true">
+        Search
       </button>
+
+      <div class="tc-nav__dropdown" data-role="listings-dropdown">
+        <button
+          type="button"
+          class="tc-nav__link mode-button"
+          data-mode="listing"
+          data-role="listings-toggle"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Listings <span aria-hidden="true">▾</span>
+        </button>
+        <div class="tc-nav__menu">
+          <label class="field" data-role="listing-filter-field">
+            <span>Filter</span>
+            <input type="text" data-control="listing-filter" placeholder="Filter by label, ID, or URL" />
+          </label>
+          <label class="field" data-role="listing-select-field">
+            <span>Listing</span>
+            <select data-control="listing"></select>
+          </label>
+        </div>
+      </div>
     </div>
 
-    <div class="tc-panel__controls" data-role="top-panel-controls">
-      <label class="field" data-minimize-keep="true">
-        <span>Tracking ID</span>
+    <div class="tc-nav__spacer"></div>
+
+    <div class="tc-nav__right">
+      <label class="tc-pill tc-pill--select" title="Tracking ID">
         <select data-control="tracking"></select>
       </label>
 
-      <label class="field" data-minimize-keep="true">
-        <span>Locale</span>
+      <label class="tc-pill tc-pill--select" title="Locale">
         <select data-control="locale"></select>
       </label>
 
-      <div class="field" data-minimize-keep="true">
-        <span>Mode</span>
-        <div class="mode-switch" role="tablist" aria-label="Execution mode">
-          <button type="button" class="mode-button active" data-mode="search" role="tab" aria-selected="true">
-            Search
-          </button>
-          <button type="button" class="mode-button" data-mode="listing" role="tab" aria-selected="false">
-            Listing
-          </button>
-        </div>
-      </div>
+      <button
+        type="button"
+        class="tc-icon-btn"
+        data-action="toggle-panel"
+        aria-expanded="false"
+        title="Console settings"
+        aria-label="Console settings"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+      </button>
 
-      <label class="field" data-role="listing-filter-field">
-        <span>Listing Filter</span>
-        <input type="text" data-control="listing-filter" placeholder="Filter by label, ID, or URL" />
-      </label>
+      <button
+        type="button"
+        class="tc-icon-btn"
+        data-action="toggle-session"
+        aria-expanded="false"
+        title="Session diagnostics"
+        aria-label="Session diagnostics"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12h4l3 8 4-16 3 8h4" />
+        </svg>
+      </button>
+    </div>
+  </nav>
 
-      <label class="field" data-role="listing-select-field" data-minimize-keep="true">
-        <span>Listing</span>
-        <select data-control="listing"></select>
-      </label>
+  <main class="tc-storefront" aria-label="Commerce Experience">
+    <div class="tc-atomic-root" data-role="atomic-interface-root"></div>
+  </main>
 
-      <div class="field field-actions">
-        <span>Advanced Context</span>
+  <div class="tc-scrim" data-role="drawer-scrim"></div>
+
+  <!-- Console Settings drawer -->
+  <aside class="tc-drawer" data-role="settings-drawer" aria-label="Console settings">
+    <div class="tc-drawer__head">
+      <h2>Console Settings</h2>
+      <button type="button" class="tc-drawer__close" data-action="close-drawers" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="tc-drawer__body" data-role="top-panel-controls">
+      <section class="tc-drawer__section">
+        <span class="tc-drawer__label">Advanced Context</span>
+        <label class="field">
+          <span>Preset</span>
+          <select data-control="preset"></select>
+        </label>
         <div class="button-row">
-          <label class="field-inline">
-            <span>Preset</span>
-            <select data-control="preset"></select>
-          </label>
           <button type="button" data-action="open-advanced">Edit Selected Preset JSON</button>
           <button type="button" data-action="open-presets">Manage Context Presets</button>
         </div>
-      </div>
+      </section>
 
-      <div class="field field-actions">
-        <span>Product Templates</span>
-        <div class="button-row">
-          <label class="field-inline">
-            <span>Preset</span>
-            <select data-control="product-template-preset"></select>
-          </label>
-          <label class="field-inline">
+      <section class="tc-drawer__section">
+        <span class="tc-drawer__label">Product Templates</span>
+        <label class="field">
+          <span>Preset</span>
+          <select data-control="product-template-preset"></select>
+        </label>
+
+        <div class="field-row">
+          <label class="field">
             <span>Product List Display</span>
             <select data-control="product-list-display">
               <option value="grid">Grid</option>
               <option value="list">List</option>
             </select>
           </label>
-          <label class="field-inline">
+          <label class="field">
             <span>Product List Density</span>
             <select data-control="product-list-density">
               <option value="compact">Compact</option>
@@ -85,7 +123,10 @@
               <option value="comfortable">Comfortable</option>
             </select>
           </label>
-          <label class="field-inline">
+        </div>
+
+        <div class="field-row">
+          <label class="field">
             <span>Product Image Size</span>
             <select data-control="product-list-image-size">
               <option value="small">Small</option>
@@ -94,7 +135,7 @@
               <option value="none">None</option>
             </select>
           </label>
-          <label class="field-inline">
+          <label class="field">
             <span>Instant Product Image</span>
             <select data-control="instant-products-image-size">
               <option value="small">Small</option>
@@ -103,51 +144,38 @@
               <option value="none">None</option>
             </select>
           </label>
-          <button type="button" data-action="open-advanced-product-templates">
-            Advanced Product Templates
-          </button>
+        </div>
+
+        <div class="button-row">
+          <button type="button" data-action="open-advanced-product-templates">Advanced Product Templates</button>
           <button type="button" data-action="open-product-template-presets">Manage Product Templates</button>
         </div>
-      </div>
-
-      <div class="field field-actions">
-        <span>Console Actions</span>
-        <div class="button-row">
-          <button type="button" data-action="run-request">Apply</button>
-          <button type="button" data-action="reset-state" class="danger">Reset</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="tc-session" data-role="session-panel">
-    <div class="tc-session__header">
-      <div>
-        <h2>Session</h2>
-        <p class="tc-session__subtitle">Low-profile summary with expandable diagnostics.</p>
-      </div>
-      <div class="tc-session__actions">
-        <span class="status-chip" data-field="status-mini">Idle</span>
-        <button
-          type="button"
-          data-action="toggle-session"
-          class="icon-button"
-          aria-expanded="false"
-          title="Expand diagnostics"
-        >
-          <span aria-hidden="true">▸</span>
-        </button>
-      </div>
+      </section>
     </div>
 
-    <div class="pills">
-      <span class="pill" data-field="mode-pill">Mode: search</span>
-      <span class="pill" data-field="tracking-pill"></span>
-      <span class="pill" data-field="locale-pill"></span>
-      <span class="pill" data-field="listing-pill"></span>
+    <div class="tc-drawer__foot">
+      <button type="button" data-action="reset-state" class="danger">Reset</button>
+      <button type="button" data-action="run-request" class="primary">Apply</button>
+    </div>
+  </aside>
+
+  <!-- Session Diagnostics drawer -->
+  <aside class="tc-drawer" data-role="session-panel" aria-label="Session diagnostics">
+    <div class="tc-drawer__head">
+      <h2>Session Diagnostics</h2>
+      <button type="button" class="tc-drawer__close" data-action="close-drawers" aria-label="Close">&times;</button>
     </div>
 
-    <div class="tc-session__details is-minimized" data-role="session-details">
+    <div class="tc-drawer__body" data-role="session-details">
+      <span class="status-chip" data-field="status-mini">Idle</span>
+
+      <div class="pills">
+        <span class="pill" data-field="mode-pill">Mode: search</span>
+        <span class="pill" data-field="tracking-pill"></span>
+        <span class="pill" data-field="locale-pill"></span>
+        <span class="pill" data-field="listing-pill"></span>
+      </div>
+
       <div class="session-grid">
         <div class="session-row" data-field="search-row">
           <span>Search URL</span>
@@ -162,11 +190,7 @@
       <p class="status-line" data-field="status">Idle</p>
       <pre class="result-panel" data-field="result">Apply to initialize Atomic commerce interface.</pre>
     </div>
-  </section>
-
-  <section class="tc-atomic-shell" aria-label="Commerce Experience">
-    <div class="tc-atomic-root" data-role="atomic-interface-root"></div>
-  </section>
+  </aside>
 
   <dialog class="tc-modal" data-modal="advanced-context">
     <form method="dialog" class="modal-form">
@@ -189,7 +213,7 @@
 
       <div class="button-row modal-actions">
         <button value="cancel">Cancel</button>
-        <button type="button" data-action="apply-advanced">Apply</button>
+        <button type="button" data-action="apply-advanced" class="primary">Apply</button>
       </div>
     </form>
   </dialog>
@@ -244,7 +268,7 @@
       <div class="button-row modal-actions">
         <button type="button" data-action="clear-product-templates">Clear</button>
         <button value="cancel">Cancel</button>
-        <button type="button" data-action="apply-product-templates">Apply</button>
+        <button type="button" data-action="apply-product-templates" class="primary">Apply</button>
       </div>
     </form>
   </dialog>

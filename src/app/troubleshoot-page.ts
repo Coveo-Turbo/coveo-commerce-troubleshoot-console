@@ -38,6 +38,9 @@ type AtomicCommerceInterfaceElement = HTMLElement & {
 type RequiredElements = {
   panelControls: HTMLElement;
   panelToggleButton: HTMLButtonElement;
+  settingsDrawer: HTMLElement;
+  drawerScrim: HTMLElement;
+  listingsDropdown: HTMLElement;
   sessionPanel: HTMLElement;
   sessionToggleButton: HTMLButtonElement;
   sessionDetails: HTMLElement;
@@ -210,6 +213,9 @@ export class TroubleshootPage {
     this.cacheElements();
     this.wireEvents();
 
+    // Drawers are transient UI; always start closed regardless of persisted state.
+    this.store.updateState({isTopPanelMinimized: true, isSessionPanelMinimized: true});
+
     this.store.subscribe(() => {
       this.syncViewWithState();
     });
@@ -270,6 +276,9 @@ export class TroubleshootPage {
     this.elements = {
       panelControls: this.mustQuery<HTMLElement>('[data-role="top-panel-controls"]'),
       panelToggleButton: this.mustQuery<HTMLButtonElement>('[data-action="toggle-panel"]'),
+      settingsDrawer: this.mustQuery<HTMLElement>('[data-role="settings-drawer"]'),
+      drawerScrim: this.mustQuery<HTMLElement>('[data-role="drawer-scrim"]'),
+      listingsDropdown: this.mustQuery<HTMLElement>('[data-role="listings-dropdown"]'),
       sessionPanel: this.mustQuery<HTMLElement>('[data-role="session-panel"]'),
       sessionToggleButton: this.mustQuery<HTMLButtonElement>('[data-action="toggle-session"]'),
       sessionDetails: this.mustQuery<HTMLElement>('[data-role="session-details"]'),
@@ -355,12 +364,40 @@ export class TroubleshootPage {
   private wireEvents() {
     this.elements.panelToggleButton.addEventListener('click', () => {
       const current = this.store.getSnapshot().state.isTopPanelMinimized;
-      this.store.updateState({isTopPanelMinimized: !current});
+      this.store.updateState({isTopPanelMinimized: !current, isSessionPanelMinimized: true});
     });
 
     this.elements.sessionToggleButton.addEventListener('click', () => {
       const current = this.store.getSnapshot().state.isSessionPanelMinimized;
-      this.store.updateState({isSessionPanelMinimized: !current});
+      this.store.updateState({isSessionPanelMinimized: !current, isTopPanelMinimized: true});
+    });
+
+    this.elements.drawerScrim.addEventListener('click', () => {
+      this.store.updateState({isTopPanelMinimized: true, isSessionPanelMinimized: true});
+    });
+
+    for (const closeButton of this.mount.querySelectorAll<HTMLButtonElement>('[data-action="close-drawers"]')) {
+      closeButton.addEventListener('click', () => {
+        this.store.updateState({isTopPanelMinimized: true, isSessionPanelMinimized: true});
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.store.updateState({isTopPanelMinimized: true, isSessionPanelMinimized: true});
+      }
+    });
+
+    const listingsToggle = this.mount.querySelector<HTMLElement>('[data-role="listings-toggle"]');
+    listingsToggle?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.elements.listingsDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!this.elements.listingsDropdown.contains(event.target as Node)) {
+        this.elements.listingsDropdown.classList.remove('open');
+      }
     });
 
     this.elements.advancedDialog.addEventListener('close', () => {
@@ -899,7 +936,7 @@ export class TroubleshootPage {
       this.elements.localeSelect,
       (tracking?.locales ?? []).map((locale) => ({
         value: locale.id,
-        label: `${locale.label} [${locale.language}-${locale.country}-${locale.currency}]`,
+        label: locale.label,
       })),
       state.selectedLocaleId
     );
@@ -928,7 +965,7 @@ export class TroubleshootPage {
       filteredListings.length > 0
         ? filteredListings.map((listing) => ({
             value: listing.id,
-            label: `${listing.label} (${listing.id})`,
+            label: listing.label,
           }))
         : [{value: '', label: 'No listing available'}];
 
@@ -986,14 +1023,17 @@ export class TroubleshootPage {
 
   private refreshPanelVisibility() {
     const {isTopPanelMinimized} = this.store.getSnapshot().state;
-    this.elements.panelControls.classList.toggle('is-minimized', isTopPanelMinimized);
-    this.elements.panelToggleButton.setAttribute('aria-expanded', String(!isTopPanelMinimized));
-    this.elements.panelToggleButton.title = isTopPanelMinimized
-      ? 'Expand controls'
-      : 'Minimize controls';
-    this.elements.panelToggleButton.innerHTML = `<span aria-hidden="true">${
-      isTopPanelMinimized ? '▸' : '▾'
-    }</span>`;
+    const isOpen = !isTopPanelMinimized;
+    this.elements.settingsDrawer.classList.toggle('open', isOpen);
+    this.elements.panelToggleButton.classList.toggle('active', isOpen);
+    this.elements.panelToggleButton.setAttribute('aria-expanded', String(isOpen));
+    this.refreshScrim();
+  }
+
+  private refreshScrim() {
+    const {isTopPanelMinimized, isSessionPanelMinimized} = this.store.getSnapshot().state;
+    const anyOpen = !isTopPanelMinimized || !isSessionPanelMinimized;
+    this.elements.drawerScrim.classList.toggle('open', anyOpen);
   }
 
   private refreshSessionSummary() {
@@ -1017,15 +1057,11 @@ export class TroubleshootPage {
 
   private refreshSessionPanelVisibility() {
     const {isSessionPanelMinimized} = this.store.getSnapshot().state;
-    this.elements.sessionPanel.classList.toggle('is-minimized', isSessionPanelMinimized);
-    this.elements.sessionDetails.classList.toggle('is-minimized', isSessionPanelMinimized);
-    this.elements.sessionToggleButton.setAttribute('aria-expanded', String(!isSessionPanelMinimized));
-    this.elements.sessionToggleButton.title = isSessionPanelMinimized
-      ? 'Expand diagnostics'
-      : 'Collapse diagnostics';
-    this.elements.sessionToggleButton.innerHTML = `<span aria-hidden="true">${
-      isSessionPanelMinimized ? '▸' : '▾'
-    }</span>`;
+    const isOpen = !isSessionPanelMinimized;
+    this.elements.sessionPanel.classList.toggle('open', isOpen);
+    this.elements.sessionToggleButton.classList.toggle('active', isOpen);
+    this.elements.sessionToggleButton.setAttribute('aria-expanded', String(isOpen));
+    this.refreshScrim();
   }
 
   private renderPresetList() {
