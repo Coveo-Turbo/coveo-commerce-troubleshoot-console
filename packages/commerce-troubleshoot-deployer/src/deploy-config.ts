@@ -33,7 +33,12 @@ export function createDeployConfig(options: {
   hostedPageName: string;
   bundleRelativeDir: string;
   customComponentsUrl?: string;
+  appBundleUrl?: string;
+  stylesUrl?: string;
 }): CoveoDeployConfig {
+  const appBundleUrl = options.appBundleUrl?.trim();
+  const stylesUrl = options.stylesUrl?.trim();
+
   return {
     name: options.hostedPageName,
     dir: options.bundleRelativeDir,
@@ -45,12 +50,20 @@ export function createDeployConfig(options: {
         path: 'js/runtime-config.js',
         isModule: true,
       },
-      {
-        path: 'js/app.js',
-        isModule: true,
-      },
+      // The app bundle is inlined by default. When appBundleUrl is provided it is served
+      // from an external URL instead, keeping the large bundle out of the Hosted Page API
+      // request body (avoids WAF request-body inspection false positives).
+      ...(appBundleUrl
+        ? []
+        : [
+            {
+              path: 'js/app.js',
+              isModule: true,
+            },
+          ]),
     ],
     javascriptUrls: [
+      ...(appBundleUrl ? [{path: appBundleUrl, isModule: true}] : []),
       {
         path: ATOMIC_SCRIPT_URL,
         isModule: true,
@@ -60,11 +73,17 @@ export function createDeployConfig(options: {
         : []),
     ],
     cssEntryFiles: [
-      {
-        path: 'styles/main.css',
-      },
+      // main.css is inlined by default; externalized to a URL when stylesUrl is provided.
+      ...(stylesUrl
+        ? []
+        : [
+            {
+              path: 'styles/main.css',
+            },
+          ]),
     ],
     cssUrls: [
+      ...(stylesUrl ? [{path: stylesUrl}] : []),
       {
         path: ATOMIC_THEME_URL,
       },

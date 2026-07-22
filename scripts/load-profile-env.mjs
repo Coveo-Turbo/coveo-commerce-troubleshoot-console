@@ -142,6 +142,8 @@ export function resolveDeployRequestFromContext(
     readFromArgOrEnv(argv, 'default-product-template-preset-id', 'APP_DEFAULT_PRODUCT_TEMPLATE_PRESET_ID') ||
     undefined;
   const customComponentsUrl = readFromArgOrEnv(argv, 'custom-components-url', 'APP_CUSTOM_COMPONENTS_URL') || undefined;
+  const appBundleUrl = readFromArgOrEnv(argv, 'app-bundle-url', 'APP_APP_BUNDLE_URL') || undefined;
+  const stylesUrl = readFromArgOrEnv(argv, 'styles-url', 'APP_STYLES_URL') || undefined;
 
   if (!organizationId.trim()) {
     throw new Error('Missing organization ID. Set APP_ORGANIZATION_ID or run coveo auth:login.');
@@ -175,6 +177,8 @@ export function resolveDeployRequestFromContext(
         ? {deployConfigRelativePath: options.deployConfigRelativePath}
         : {}),
       ...(customComponentsUrl ? {customComponentsUrl} : {}),
+      ...(appBundleUrl ? {appBundleUrl} : {}),
+      ...(stylesUrl ? {stylesUrl} : {}),
     },
   };
 }

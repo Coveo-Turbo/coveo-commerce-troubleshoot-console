@@ -43,6 +43,8 @@ export type DeployOptions = {
   bundleRelativeDir?: string;
   deployConfigRelativePath?: string;
   customComponentsUrl?: string;
+  appBundleUrl?: string;
+  stylesUrl?: string;
 };
 
 export type DeployTroubleshootRequest = {

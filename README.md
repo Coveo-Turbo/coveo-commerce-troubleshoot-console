@@ -172,6 +172,8 @@ Supported args/env:
 - `--currency` / `APP_DEFAULT_CURRENCY`
 - `--view-url` / `APP_DEFAULT_VIEW_URL`
 - `--custom-components-url` / `APP_CUSTOM_COMPONENTS_URL` (optional external ES module URL for custom components)
+- `--app-bundle-url` / `APP_APP_BUNDLE_URL` (optional external URL for the app bundle; see "Hosting the app bundle externally")
+- `--styles-url` / `APP_STYLES_URL` (optional external URL for the app stylesheet)
 - `--rotate` (managed strategy only)
 
 If engine/cmh tokens are not provided, the service uses managed-key mode.
@@ -202,7 +204,33 @@ preset remains available for catalogs whose colors and sizes are represented thr
 
 `--tracking-id` only sets runtime defaults for the hosted app payload. It does not change hosted page identity (`--page-name`) and does not alter key strategy selection.
 
-## Consuming the Deployer Service
+## Hosting the app bundle externally
+
+By default the deployer inlines `js/app.js` and `styles/main.css` into the Hosted Page API request body. In organizations protected by a Web Application Firewall (WAF), a large minified bundle in the request body can trigger managed rule-set false positives. To avoid this, you can serve the app bundle and stylesheet from external URLs instead (the same mechanism used for custom components). `js/runtime-config.js` always stays inline because it carries the small, per-deploy configuration.
+
+This is opt-in and backward compatible: when the URLs below are not provided, the bundle and stylesheet are inlined as before.
+
+1. Build the standalone bundle and stylesheet:
+
+```bash
+npm run build:app:cdn
+```
+
+This writes `cdn/app/app.js` and `cdn/app/main.css` (it fails if the build is code-split into multiple JS chunks, since external hosting requires a self-contained bundle).
+
+2. Commit those files, then point the deploy at their commit-pinned jsDelivr URLs:
+
+```bash
+APP_APP_BUNDLE_URL=https://cdn.jsdelivr.net/gh/Coveo-Turbo/coveo-commerce-troubleshoot-console@<commit>/cdn/app/app.js \
+APP_STYLES_URL=https://cdn.jsdelivr.net/gh/Coveo-Turbo/coveo-commerce-troubleshoot-console@<commit>/cdn/app/main.css \
+npm run deploy:hosted -- --page-name <page_name>
+```
+
+When set, `app.js` is emitted as an external `javascriptUrls` entry (loaded before the Atomic script) and `main.css` as an external `cssUrls` entry, keeping the request body small.
+
+Trade-off: because the URLs are commit-pinned and immutable, any UI change requires re-running `build:app:cdn`, committing, and re-pinning the URLs before deploying — otherwise the hosted page keeps serving the previously published bundle.
+
+
 
 Exports come from:
 - `packages/commerce-troubleshoot-deployer/src/index.ts`
