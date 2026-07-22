@@ -234,6 +234,21 @@ describe('sibling-aware product components', () => {
     });
   });
 
+  it('logs a product-click on right-click (contextmenu) of the title link', async () => {
+    const {link, selectSnapshots} = buildCard(buildProduct());
+    await flushMicrotasks();
+
+    // Right-click fires contextmenu/mousedown (not click); it must still log a product-click.
+    link.shadowRoot?.querySelector<HTMLAnchorElement>('a')?.dispatchEvent(
+      new MouseEvent('contextmenu', {bubbles: true, button: 2})
+    );
+
+    expect(selectSnapshots.at(-1)).toEqual({
+      productId: 'gid://shopify/Product/8997353521321',
+      name: 'Heritage Crew Tee - Biscotti',
+    });
+  });
+
   it('logs the selected sibling (not the initial product) after a swatch swap', async () => {
     const {link, swatches, selectSnapshots} = buildCard(buildProduct());
     await flushMicrotasks();
