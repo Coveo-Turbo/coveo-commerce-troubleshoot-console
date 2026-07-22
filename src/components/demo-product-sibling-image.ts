@@ -1,11 +1,13 @@
 import type {Product} from '@coveo/headless/commerce';
 import {
+  bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   getProductFallbackImages,
   getSiblingProductUrl,
   listenForSiblingSelection,
   parseStyleGroupSiblings,
+  resolveInteractiveProduct,
   resolveProductContext,
   type StyleGroupSibling,
 } from './demo-product-sibling-data';
@@ -18,6 +20,7 @@ export class DemoProductSiblingImage extends HTMLElement {
   private activeSibling: StyleGroupSibling | null = null;
   private activeImageIndex = 0;
   private removeSelectionListener: (() => void) | null = null;
+  private removeLinkAnalytics: (() => void) | null = null;
 
   public connectedCallback() {
     queueMicrotask(() => this.refresh());
@@ -26,6 +29,8 @@ export class DemoProductSiblingImage extends HTMLElement {
   public disconnectedCallback() {
     this.removeSelectionListener?.();
     this.removeSelectionListener = null;
+    this.removeLinkAnalytics?.();
+    this.removeLinkAnalytics = null;
   }
 
   private refresh() {
@@ -104,7 +109,8 @@ export class DemoProductSiblingImage extends HTMLElement {
     });
     const link = document.createElement('a');
     link.href = href || '#';
-    link.addEventListener('click', (event) => event.stopPropagation());
+    this.removeLinkAnalytics?.();
+    this.removeLinkAnalytics = bindProductClickAnalytics(link, resolveInteractiveProduct(this));
 
     const image = document.createElement('img');
     image.src = src;

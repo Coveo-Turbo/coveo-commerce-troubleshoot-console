@@ -1,9 +1,10 @@
-import type {Product} from '@coveo/headless/commerce';
+import type {InteractiveProduct, Product} from '@coveo/headless/commerce';
 import {
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   listenForSiblingSelection,
   parseStyleGroupSiblings,
+  resolveInteractiveProduct,
   resolveProductContext,
   type StyleGroupSibling,
   type StyleGroupSiblingVariant,
@@ -39,6 +40,7 @@ function escapeHtml(value: string): string {
 export class DemoProductSiblingSizeSelector extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
+  private interactiveProduct: InteractiveProduct | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private selectedVariantId = '';
   private hoverTarget: HTMLElement | null = null;
@@ -113,6 +115,7 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
       return;
     }
 
+    this.interactiveProduct = resolveInteractiveProduct(this);
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
     this.setActiveSibling(findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field)));
     this.removeSelectionListener?.();
@@ -187,6 +190,9 @@ export class DemoProductSiblingSizeSelector extends HTMLElement {
     const dataLayer = window.dataLayer ?? [];
     dataLayer.push(payload);
     window.dataLayer = dataLayer;
+
+    // Also emit the Coveo product-click analytics event for the add-to-bag interaction.
+    this.interactiveProduct?.select();
   }
 
   private setActiveState() {

@@ -78,6 +78,16 @@ function buildCard(product: Product) {
     (event as CustomEvent<(resolved: Product) => void>).detail(product);
   });
 
+  const interactiveProduct = {
+    select: vi.fn(),
+    beginDelayedSelect: vi.fn(),
+    cancelPendingSelect: vi.fn(),
+    warningMessage: undefined,
+  };
+  card.addEventListener('atomic/resolveInteractiveResult', (event) => {
+    (event as CustomEvent<(resolved: typeof interactiveProduct) => void>).detail(interactiveProduct);
+  });
+
   const link = document.createElement('demo-product-sibling-link');
   const price = document.createElement('demo-product-sibling-price');
   const visual = document.createElement('atomic-product-section-visual');
@@ -96,7 +106,7 @@ function buildCard(product: Product) {
   card.append(link, price, visual, children);
   document.body.append(card);
 
-  return {card, image, link, price, sizeSelector, swatches};
+  return {card, image, link, price, sizeSelector, swatches, interactiveProduct};
 }
 
 async function flushMicrotasks() {
@@ -203,6 +213,39 @@ describe('sibling-aware product components', () => {
       'https://cdn.shopify.com/burnt-olive-front.jpg'
     );
     expect(image.shadowRoot?.querySelector('button[data-action="next-image"]')).toBeNull();
+  });
+
+  it('emits Coveo product-click analytics when the title link is clicked', async () => {
+    const {link, interactiveProduct} = buildCard(buildProduct());
+    await flushMicrotasks();
+
+    link.shadowRoot?.querySelector<HTMLAnchorElement>('a')?.dispatchEvent(
+      new MouseEvent('click', {bubbles: true})
+    );
+
+    expect(interactiveProduct.select).toHaveBeenCalledTimes(1);
+  });
+
+  it('emits Coveo product-click analytics when the image link is clicked', async () => {
+    const {image, interactiveProduct} = buildCard(buildProduct());
+    await flushMicrotasks();
+
+    image.shadowRoot?.querySelector<HTMLAnchorElement>('a')?.dispatchEvent(
+      new MouseEvent('click', {bubbles: true})
+    );
+
+    expect(interactiveProduct.select).toHaveBeenCalledTimes(1);
+  });
+
+  it('emits product-click analytics and an add_to_cart dataLayer event on add-to-bag', async () => {
+    const {sizeSelector, interactiveProduct} = buildCard(buildProduct());
+    await flushMicrotasks();
+
+    const sizeButtons = sizeSelector.shadowRoot?.querySelectorAll<HTMLButtonElement>('button[data-variant-id]');
+    sizeButtons?.[0]?.click();
+
+    expect(interactiveProduct.select).toHaveBeenCalledTimes(1);
+    expect((window.dataLayer ?? []).length).toBe(1);
   });
 
   it('uses the product image as a fallback when sibling JSON is unavailable', async () => {

@@ -1,8 +1,10 @@
-import {ProductTemplatesHelpers, type Product} from '@coveo/headless/commerce';
+import {ProductTemplatesHelpers, type InteractiveProduct, type Product} from '@coveo/headless/commerce';
 
 export const DEFAULT_SIBLINGS_FIELD = 'style_group_siblings';
 export const SELECT_SIBLING_EVENT_NAME = 'demo/selectSiblingProduct';
 export const RESOLVE_PRODUCT_EVENT_NAME = 'atomic/resolveResult';
+// Same context event atomic-product-link uses to obtain the InteractiveProduct controller.
+export const RESOLVE_INTERACTIVE_PRODUCT_EVENT_NAME = 'atomic/resolveInteractiveResult';
 
 export type StyleGroupSiblingVariant = {
   variantId: string;
@@ -215,6 +217,70 @@ export function resolveProductContext(element: HTMLElement): Product | null {
   );
 
   return product;
+}
+
+/**
+ * Resolves the `InteractiveProduct` controller from the parent `atomic-product`, using the same
+ * `atomic/resolveInteractiveResult` context event that `atomic-product-link` relies on. Returns
+ * null when the component is not hosted inside an Atomic product (e.g., in isolated tests).
+ */
+export function resolveInteractiveProduct(element: HTMLElement): InteractiveProduct | null {
+  let interactiveProduct: InteractiveProduct | null = null;
+
+  element.dispatchEvent(
+    new CustomEvent<(value: InteractiveProduct) => void>(RESOLVE_INTERACTIVE_PRODUCT_EVENT_NAME, {
+      detail: (resolved) => {
+        interactiveProduct = resolved;
+      },
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    })
+  );
+
+  return interactiveProduct;
+}
+
+/**
+ * Binds Coveo product-click analytics to an anchor, mirroring Atomic's `bindAnalyticsToLink`:
+ * `click`/`contextmenu`/`mousedown`/`mouseup` trigger `select()`, `touchstart` begins a delayed
+ * select, and `touchend` cancels it. Propagation is stopped so the host card does not double-handle
+ * the interaction. Returns a cleanup function.
+ */
+export function bindProductClickAnalytics(
+  anchor: HTMLAnchorElement,
+  interactiveProduct: InteractiveProduct | null,
+  options: {stopPropagation?: boolean} = {}
+): () => void {
+  const stopPropagation = options.stopPropagation !== false;
+
+  const run = (event: Event, action?: () => void) => {
+    if (stopPropagation) {
+      event.stopPropagation();
+    }
+    action?.();
+  };
+
+  const onSelect = (event: Event) => run(event, interactiveProduct ? () => interactiveProduct.select() : undefined);
+  const onBeginDelayedSelect = (event: Event) =>
+    run(event, interactiveProduct ? () => interactiveProduct.beginDelayedSelect() : undefined);
+  const onCancelPendingSelect = (event: Event) =>
+    run(event, interactiveProduct ? () => interactiveProduct.cancelPendingSelect() : undefined);
+
+  const selectEvents = ['click', 'contextmenu', 'mousedown', 'mouseup'] as const;
+  for (const name of selectEvents) {
+    anchor.addEventListener(name, onSelect);
+  }
+  anchor.addEventListener('touchstart', onBeginDelayedSelect, {passive: true});
+  anchor.addEventListener('touchend', onCancelPendingSelect, {passive: true});
+
+  return () => {
+    for (const name of selectEvents) {
+      anchor.removeEventListener(name, onSelect);
+    }
+    anchor.removeEventListener('touchstart', onBeginDelayedSelect);
+    anchor.removeEventListener('touchend', onCancelPendingSelect);
+  };
 }
 
 export function getProductCard(element: HTMLElement): HTMLElement | null {

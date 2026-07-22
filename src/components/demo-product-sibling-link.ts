@@ -1,10 +1,12 @@
 import type {Product} from '@coveo/headless/commerce';
 import {
+  bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
   findCurrentSibling,
   getSiblingProductUrl,
   listenForSiblingSelection,
   parseStyleGroupSiblings,
+  resolveInteractiveProduct,
   resolveProductContext,
   type StyleGroupSibling,
 } from './demo-product-sibling-data';
@@ -16,6 +18,7 @@ export class DemoProductSiblingLink extends HTMLElement {
   private product: Product | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private removeSelectionListener: (() => void) | null = null;
+  private removeLinkAnalytics: (() => void) | null = null;
 
   public connectedCallback() {
     queueMicrotask(() => this.refresh());
@@ -24,6 +27,8 @@ export class DemoProductSiblingLink extends HTMLElement {
   public disconnectedCallback() {
     this.removeSelectionListener?.();
     this.removeSelectionListener = null;
+    this.removeLinkAnalytics?.();
+    this.removeLinkAnalytics = null;
   }
 
   private refresh() {
@@ -52,7 +57,10 @@ export class DemoProductSiblingLink extends HTMLElement {
     const anchor = document.createElement('a');
     anchor.href = this.activeSibling ? getSiblingProductUrl(this.product, this.activeSibling) : this.product.clickUri;
     anchor.textContent = this.activeSibling?.title || this.product.ec_name || '';
-    anchor.addEventListener('click', (event) => event.stopPropagation());
+
+    // Emit Coveo product-click analytics (same behavior as atomic-product-link).
+    this.removeLinkAnalytics?.();
+    this.removeLinkAnalytics = bindProductClickAnalytics(anchor, resolveInteractiveProduct(this));
 
     const style = document.createElement('style');
     style.textContent = ':host { display: block; } a { color: inherit; font: inherit; font-weight: inherit; text-decoration: none; } a:hover { text-decoration: underline; } a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }';
