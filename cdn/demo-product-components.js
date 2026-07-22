@@ -15158,7 +15158,7 @@ class qx extends HTMLElement {
           display: block;
           position: absolute;
           inset-inline: 0;
-          bottom: 2rem;
+          bottom: 0;
           z-index: 1;
           max-height: 0;
           opacity: 0;

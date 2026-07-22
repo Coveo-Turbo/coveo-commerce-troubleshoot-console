@@ -139,7 +139,7 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
           display: block;
           position: absolute;
           inset-inline: 0;
-          bottom: 2rem;
+          bottom: 0;
           z-index: 1;
           max-height: 0;
           opacity: 0;
@@ -1099,4 +1099,4 @@ Error: ${S}`)}}return l()}case N.MESSAGES_SNAPSHOT:{let g=await Re(r,o,a,(v,b,S)
       </div>
     </section>
   `}async function xU(){const e=await IU()??EU();try{const t=yq(),n=AU();await Jq();const r=Oq({defaults:CU(t,n),defaultPresets:[Pi()],defaultProductTemplatePresets:n}),i=new Vq({organizationId:t.organizationId,accessToken:t.cmhAccessToken,defaults:t.defaults,...t.region?{region:t.region}:{}});await new oU({mount:e,config:t,cmhService:i,store:r}).init()}catch(t){_U(e,t)}}xU();
-//# sourceMappingURL=app-DtgGIbr2.js.map
+//# sourceMappingURL=app-BczPJrVr.js.map

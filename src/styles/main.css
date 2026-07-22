@@ -270,6 +270,19 @@
   min-height: 70vh;
 }
 
+/* Match the OOTB product image sizing to the custom sibling image (fill + cover) so cards
+   look consistent whether or not a product has style_group_siblings. */
+[data-template='troubleshoot'] atomic-product-image,
+.troubleshoot-root atomic-product-image {
+  display: block;
+  inline-size: 100%;
+}
+
+[data-template='troubleshoot'] atomic-product-image::part(product-image),
+.troubleshoot-root atomic-product-image::part(product-image) {
+  object-fit: cover;
+}
+
 /* ───────── Shared form controls ───────── */
 [data-template='troubleshoot'] select,
 [data-template='troubleshoot'] input,
