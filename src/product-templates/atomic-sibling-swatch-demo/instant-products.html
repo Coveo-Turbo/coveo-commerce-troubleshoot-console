@@ -1,0 +1,44 @@
+<template>
+  <atomic-product-section-name>
+    <demo-product-sibling-link
+      field="style_group_siblings"
+      class="font-bold"
+    ></demo-product-sibling-link>
+  </atomic-product-section-name>
+  <atomic-product-section-visual>
+    <demo-product-sibling-image
+      field="style_group_siblings"
+    ></demo-product-sibling-image>
+    <demo-product-sibling-size-selector
+      field="style_group_siblings"
+    ></demo-product-sibling-size-selector>
+  </atomic-product-section-visual>
+  <atomic-product-section-metadata>
+    <atomic-product-field-condition if-defined="ec_brand">
+      <atomic-product-text
+        field="ec_brand"
+        class="block text-neutral-dark"
+      ></atomic-product-text>
+    </atomic-product-field-condition>
+    <atomic-product-field-condition if-defined="ec_rating">
+      <atomic-product-rating field="ec_rating"></atomic-product-rating>
+    </atomic-product-field-condition>
+  </atomic-product-section-metadata>
+  <atomic-product-section-description>
+    <atomic-product-text
+      field="excerpt"
+      class="block text-neutral-dark"
+    ></atomic-product-text>
+  </atomic-product-section-description>
+  <atomic-product-section-emphasized>
+    <demo-product-sibling-price
+      field="style_group_siblings"
+      currency="USD"
+    ></demo-product-sibling-price>
+  </atomic-product-section-emphasized>
+  <atomic-product-section-children>
+    <demo-product-sibling-swatches
+      field="style_group_siblings"
+    ></demo-product-sibling-swatches>
+  </atomic-product-section-children>
+</template>

@@ -13,6 +13,8 @@ import atomicExample2ProductListTemplate from '../product-templates/atomic-examp
 import atomicExample2InstantProductsTemplate from '../product-templates/atomic-example-2/instant-products.html?raw';
 import atomicColorSwatchDemoProductListTemplate from '../product-templates/atomic-color-swatch-demo/product-list.html?raw';
 import atomicColorSwatchDemoInstantProductsTemplate from '../product-templates/atomic-color-swatch-demo/instant-products.html?raw';
+import atomicSiblingSwatchDemoProductListTemplate from '../product-templates/atomic-sibling-swatch-demo/product-list.html?raw';
+import atomicSiblingSwatchDemoInstantProductsTemplate from '../product-templates/atomic-sibling-swatch-demo/instant-products.html?raw';
 
 const POLL_INTERVAL_MS = 120;
 const WAIT_TIMEOUT_MS = 10_000;
@@ -151,7 +153,16 @@ function createDefaultProductTemplatePresets(): ProductTemplatePreset[] {
     },
   };
 
-  return [defaultPreset, example1Preset, example2Preset, colorSwatchDemoPreset];
+  const siblingSwatchDemoPreset: ProductTemplatePreset = {
+    id: 'atomic-sibling-swatch-demo',
+    label: 'Sibling Swatch Demo',
+    productTemplates: {
+      productList: normalizeTemplateSource(atomicSiblingSwatchDemoProductListTemplate),
+      instantProducts: normalizeTemplateSource(atomicSiblingSwatchDemoInstantProductsTemplate),
+    },
+  };
+
+  return [defaultPreset, example1Preset, example2Preset, colorSwatchDemoPreset, siblingSwatchDemoPreset];
 }
 
 function escapeHtml(value: string): string {
