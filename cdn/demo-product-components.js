@@ -15578,8 +15578,8 @@ class Qx extends HTMLElement {
     }
     const u = document.createElement("style");
     u.textContent = `
-      :host { display: block; inline-size: 100%; block-size: 100%; min-block-size: 0; }
-      .gallery { position: relative; inline-size: 100%; block-size: 100%; min-block-size: 0; outline: none; }
+      :host { display: block; inline-size: 100%; }
+      .gallery { position: relative; inline-size: 100%; aspect-ratio: 1 / 1; outline: none; }
       .gallery:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
       a { display: block; inline-size: 100%; block-size: 100%; }
       img { display: block; inline-size: 100%; block-size: 100%; object-fit: var(--demo-sibling-image-fit, cover); object-position: center; }

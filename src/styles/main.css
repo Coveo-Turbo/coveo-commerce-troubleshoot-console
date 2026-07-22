@@ -276,10 +276,13 @@
 .troubleshoot-root atomic-product-image {
   display: block;
   inline-size: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 [data-template='troubleshoot'] atomic-product-image::part(product-image),
 .troubleshoot-root atomic-product-image::part(product-image) {
+  inline-size: 100%;
+  block-size: 100%;
   object-fit: cover;
 }
 
