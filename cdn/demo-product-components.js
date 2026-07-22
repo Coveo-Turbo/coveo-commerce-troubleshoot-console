@@ -15503,7 +15503,6 @@ class Qx extends HTMLElement {
     super(...arguments);
     H(this, "shadow", this.attachShadow({ mode: "open" }));
     H(this, "product", null);
-    H(this, "engine", null);
     H(this, "activeSibling", null);
     H(this, "activeImageIndex", 0);
     H(this, "removeSelectionListener", null);
@@ -15523,7 +15522,7 @@ class Qx extends HTMLElement {
       return;
     }
     const r = ((n = this.getAttribute("field")) == null ? void 0 : n.trim()) || fr;
-    this.engine = da(this), this.activeSibling = nn(this.product, rn(this.product, r)), this.activeImageIndex = 0, (i = this.removeSelectionListener) == null || i.call(this), this.removeSelectionListener = Vi(this, this.product, (s) => {
+    this.activeSibling = nn(this.product, rn(this.product, r)), this.activeImageIndex = 0, (i = this.removeSelectionListener) == null || i.call(this), this.removeSelectionListener = Vi(this, this.product, (s) => {
       this.activeSibling = s, this.activeImageIndex = 0, this.render();
     }), this.render();
   }
@@ -15555,7 +15554,7 @@ class Qx extends HTMLElement {
     const a = document.createElement("a");
     a.href = i || "#", (f = this.removeLinkAnalytics) == null || f.call(this), this.removeLinkAnalytics = Qh(
       a,
-      () => fa(this.engine, this.product, this.activeSibling)
+      () => fa(da(this), this.product, this.activeSibling)
     );
     const c = document.createElement("img");
     if (c.src = n, c.alt = s, c.loading = "lazy", c.setAttribute("aria-label", r.length > 1 ? `${s}, image ${this.activeImageIndex + 1} of ${r.length}` : s), a.append(c), o.append(a), r.length > 1) {
@@ -15607,7 +15606,6 @@ class Nx extends HTMLElement {
     super(...arguments);
     H(this, "shadow", this.attachShadow({ mode: "open" }));
     H(this, "product", null);
-    H(this, "engine", null);
     H(this, "activeSibling", null);
     H(this, "removeSelectionListener", null);
     H(this, "removeLinkAnalytics", null);
@@ -15625,7 +15623,6 @@ class Nx extends HTMLElement {
       this.hidden = !0;
       return;
     }
-    this.engine = da(this);
     const r = ((n = this.getAttribute("field")) == null ? void 0 : n.trim()) || fr;
     this.activeSibling = nn(this.product, rn(this.product, r)), (i = this.removeSelectionListener) == null || i.call(this), this.removeSelectionListener = Vi(this, this.product, (s) => {
       this.activeSibling = s, this.render();
@@ -15638,7 +15635,7 @@ class Nx extends HTMLElement {
     const r = document.createElement("a");
     r.href = this.activeSibling ? ha(this.product, this.activeSibling) : this.product.clickUri, r.textContent = ((i = this.activeSibling) == null ? void 0 : i.title) || this.product.ec_name || "", (s = this.removeLinkAnalytics) == null || s.call(this), this.removeLinkAnalytics = Qh(
       r,
-      () => fa(this.engine, this.product, this.activeSibling)
+      () => fa(da(this), this.product, this.activeSibling)
     );
     const n = document.createElement("style");
     n.textContent = ":host { display: block; } a { color: inherit; font: inherit; font-weight: inherit; text-decoration: none; } a:hover { text-decoration: underline; } a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }", this.shadow.replaceChildren(n, r);
@@ -15721,7 +15718,6 @@ class Wx extends HTMLElement {
     super(...arguments);
     H(this, "shadow", this.attachShadow({ mode: "open" }));
     H(this, "product", null);
-    H(this, "engine", null);
     H(this, "activeSibling", null);
     H(this, "selectedVariantId", "");
     H(this, "hoverTarget", null);
@@ -15766,7 +15762,6 @@ class Wx extends HTMLElement {
       this.hide();
       return;
     }
-    this.engine = da(this);
     const r = ((n = this.getAttribute("field")) == null ? void 0 : n.trim()) || fr;
     this.setActiveSibling(nn(this.product, rn(this.product, r))), (i = this.removeSelectionListener) == null || i.call(this), this.removeSelectionListener = Vi(this, this.product, (s) => {
       this.setActiveSibling(s);
@@ -15818,7 +15813,7 @@ class Wx extends HTMLElement {
         ...n === void 0 ? {} : { value: n }
       }
     }, s = window.dataLayer ?? [];
-    s.push(i), window.dataLayer = s, fa(this.engine, this.product, this.activeSibling, r);
+    s.push(i), window.dataLayer = s, fa(da(this), this.product, this.activeSibling, r);
   }
   setActiveState() {
     for (const r of this.shadow.querySelectorAll("button[data-variant-id]")) {

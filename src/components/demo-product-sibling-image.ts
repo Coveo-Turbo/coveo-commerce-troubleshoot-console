@@ -1,4 +1,4 @@
-import type {CommerceEngine, Product} from '@coveo/headless/commerce';
+import type {Product} from '@coveo/headless/commerce';
 import {
   bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
@@ -18,7 +18,6 @@ const TAG_NAME = 'demo-product-sibling-image';
 export class DemoProductSiblingImage extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
-  private engine: CommerceEngine | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private activeImageIndex = 0;
   private removeSelectionListener: (() => void) | null = null;
@@ -43,7 +42,6 @@ export class DemoProductSiblingImage extends HTMLElement {
     }
 
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
-    this.engine = resolveCommerceEngine(this);
     this.activeSibling = findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field));
     this.activeImageIndex = 0;
     this.removeSelectionListener?.();
@@ -114,7 +112,7 @@ export class DemoProductSiblingImage extends HTMLElement {
     link.href = href || '#';
     this.removeLinkAnalytics?.();
     this.removeLinkAnalytics = bindProductClickAnalytics(link, () =>
-      logSiblingProductClick(this.engine, this.product, this.activeSibling)
+      logSiblingProductClick(resolveCommerceEngine(this), this.product, this.activeSibling)
     );
 
     const image = document.createElement('img');

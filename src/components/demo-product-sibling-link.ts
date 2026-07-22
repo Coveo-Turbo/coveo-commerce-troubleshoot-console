@@ -1,4 +1,4 @@
-import type {CommerceEngine, Product} from '@coveo/headless/commerce';
+import type {Product} from '@coveo/headless/commerce';
 import {
   bindProductClickAnalytics,
   DEFAULT_SIBLINGS_FIELD,
@@ -17,7 +17,6 @@ const TAG_NAME = 'demo-product-sibling-link';
 export class DemoProductSiblingLink extends HTMLElement {
   private readonly shadow = this.attachShadow({mode: 'open'});
   private product: Product | null = null;
-  private engine: CommerceEngine | null = null;
   private activeSibling: StyleGroupSibling | null = null;
   private removeSelectionListener: (() => void) | null = null;
   private removeLinkAnalytics: (() => void) | null = null;
@@ -40,7 +39,6 @@ export class DemoProductSiblingLink extends HTMLElement {
       return;
     }
 
-    this.engine = resolveCommerceEngine(this);
     const field = this.getAttribute('field')?.trim() || DEFAULT_SIBLINGS_FIELD;
     this.activeSibling = findCurrentSibling(this.product, parseStyleGroupSiblings(this.product, field));
     this.removeSelectionListener?.();
@@ -61,10 +59,12 @@ export class DemoProductSiblingLink extends HTMLElement {
     anchor.href = this.activeSibling ? getSiblingProductUrl(this.product, this.activeSibling) : this.product.clickUri;
     anchor.textContent = this.activeSibling?.title || this.product.ec_name || '';
 
-    // Emit Coveo product-click analytics for the currently selected sibling color.
+    // Emit Coveo product-click analytics for the currently selected sibling color. The engine is
+    // resolved at click time because the Atomic interface may not be initialized yet at render time
+    // (notably on hosted pages), in which case the bindings callback would be queued, not immediate.
     this.removeLinkAnalytics?.();
     this.removeLinkAnalytics = bindProductClickAnalytics(anchor, () =>
-      logSiblingProductClick(this.engine, this.product, this.activeSibling)
+      logSiblingProductClick(resolveCommerceEngine(this), this.product, this.activeSibling)
     );
 
     const style = document.createElement('style');
